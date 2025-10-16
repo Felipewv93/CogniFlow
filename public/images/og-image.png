@@ -1,0 +1,49 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0f172a"/>
+  
+  <!-- Background Grid -->
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(6, 182, 212, 0.1)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Gradient Blobs -->
+  <circle cx="200" cy="150" r="150" fill="#0ea5e9" opacity="0.1" filter="blur(60px)"/>
+  <circle cx="1000" cy="480" r="180" fill="#06b6d4" opacity="0.1" filter="blur(60px)"/>
+  
+  <!-- Logo -->
+  <g transform="translate(100, 200)">
+    <rect width="100" height="100" rx="20" fill="url(#logoGradient)"/>
+    <path d="M50 25L65 47.5H35L50 25Z" fill="white" opacity="0.9"/>
+    <circle cx="50" cy="60" r="12" fill="white" opacity="0.9"/>
+    <path d="M35 75L50 52.5L65 75H35Z" fill="white" opacity="0.7"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="230" y="260" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="white">
+    Cogniflow
+  </text>
+  <text x="230" y="310" font-family="Arial, sans-serif" font-size="32" fill="rgba(255,255,255,0.7)">
+    Desbloqueie sua criatividade oculta
+  </text>
+  
+  <!-- Tagline -->
+  <text x="230" y="380" font-family="Arial, sans-serif" font-size="24" fill="url(#textGradient)">
+    ✨ Inteligência Criativa Powered by AI
+  </text>
+  
+  <defs>
+    <linearGradient id="logoGradient" x1="0" y1="0" x2="100" y2="100">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="50%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="50%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+</svg>

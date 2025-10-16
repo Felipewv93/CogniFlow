@@ -1,0 +1,81 @@
+# ===================================
+# 📦 Dependencies (PRESENTE NO PROJETO)
+# ===================================
+node_modules/
+pnpm-lock.yaml
+
+# ===================================
+# ⚡ Next.js Build (PRESENTE NO PROJETO)
+# ===================================
+.next/
+out/
+next-env.d.ts
+
+# ===================================
+# 📘 TypeScript Build (PRESENTE NO PROJETO)
+# ===================================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ===================================
+# 🔐 Environment Variables (PRESENTE NO PROJETO)
+# ===================================
+.env.local
+.env*.local
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ===================================
+# 🐛 Debug & Logs
+# ===================================
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+
+# ===================================
+# ☁️ Vercel
+# ===================================
+.vercel
+
+# ===================================
+# �️ Operating System Files
+# ===================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# ===================================
+# � IDE & Editors
+# ===================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+
+# ===================================
+# � Security Files
+# ===================================
+*.pem
+*.key
+
+# ===================================
+# 🧹 Outros
+# ===================================
+*.bak
+*.cache
+
+CHECKLIST.md
+PROJECT_SUMMARY.md
+RELATORIO_COMPLETO.md
+SUPABASE_SETUP.md
