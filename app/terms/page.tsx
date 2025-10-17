@@ -222,7 +222,7 @@ export default function TermsPage() {
               <div className="flex gap-3 mb-4">
                 <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5" />
                 <p className="text-muted-foreground">
-                  O Cogniflow é fornecido "como está". Não garantimos que o serviço será ininterrupto, livre
+                  O Cogniflow é fornecido &quot;como está&quot;. Não garantimos que o serviço será ininterrupto, livre
                   de erros ou completamente seguro. Usamos medidas de segurança, mas não podemos garantir
                   proteção absoluta contra ataques.
                 </p>
