@@ -4,8 +4,8 @@ export const SITE_CONFIG = {
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://cogniflow.app',
   ogImage: '/images/og-image.png',
   links: {
-    twitter: 'https://twitter.com/cogniflow',
-    github: 'https://github.com/felipewv93/cogniflow',
+    twitter: 'https://twitter.com',
+    github: 'https://github.com/Ryanditko/Cogniflow',
   },
 };
 

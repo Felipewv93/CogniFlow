@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Sparkles, Github, Twitter } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { ROUTES, SITE_CONFIG } from '@/utils/constants';
 
 export function Footer() {
@@ -63,13 +63,13 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">
-                  Blog
+                <Link href="/faq" className="text-sm text-muted-foreground hover:text-foreground">
+                  FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-sm text-muted-foreground hover:text-foreground">
-                  FAQ
+                <Link href={ROUTES.DASHBOARD} className="text-sm text-muted-foreground hover:text-foreground">
+                  Dashboard
                 </Link>
               </li>
             </ul>
@@ -80,10 +80,7 @@ export function Footer() {
             <h3 className="mb-4 text-sm font-semibold">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <Link
-                  href="/privacy"
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                >
+                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
                   Privacidade
                 </Link>
               </li>
@@ -96,30 +93,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-4 border-t py-6 md:flex-row">
+        <div className="flex flex-col items-center justify-center gap-4 border-t py-6">
           <p className="text-sm text-muted-foreground">
             © {currentYear} {SITE_CONFIG.name}. Todos os direitos reservados.
           </p>
-          <div className="flex items-center space-x-4">
-            <Link
-              href={SITE_CONFIG.links.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <Github className="h-5 w-5" />
-              <span className="sr-only">GitHub</span>
-            </Link>
-            <Link
-              href={SITE_CONFIG.links.twitter}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <Twitter className="h-5 w-5" />
-              <span className="sr-only">Twitter</span>
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
