@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Sparkles, Menu, User, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, User, Settings, LogOut, LayoutDashboard, Home, FileText, Sparkles, MessageSquare } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/helpers/utils';
 import { ROUTES } from '@/utils/constants';
@@ -71,11 +72,18 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container-padding mx-auto flex h-16 max-w-7xl items-center justify-between">
         {/* Logo */}
-        <Link href={ROUTES.HOME} className="flex items-center space-x-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyber-blue to-cyber-cyan">
-            <Sparkles className="h-6 w-6 text-white" />
+        <Link href={ROUTES.HOME} className="flex items-center space-x-3">
+          <div className="relative h-10 w-10">
+            <Image
+              src="/favicon.svg"
+              alt="CogniFlow Logo"
+              width={40}
+              height={40}
+              className="object-cover rounded-full"
+              priority
+            />
           </div>
-          <span className="text-xl font-bold gradient-text">Cogniflow</span>
+          <span className="text-xl font-bold gradient-text">CogniFlow</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -96,28 +104,31 @@ export function Navbar() {
               <Link
                 href={ROUTES.TEMPLATES}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
                   isActive(ROUTES.TEMPLATES) ? "text-foreground" : "text-muted-foreground"
                 )}
               >
+                <FileText className="w-4 h-4" />
                 Templates
               </Link>
               <Link
                 href={ROUTES.GENERATOR}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
                   isActive(ROUTES.GENERATOR) ? "text-foreground" : "text-muted-foreground"
                 )}
               >
+                <Sparkles className="w-4 h-4" />
                 Gerador
               </Link>
               <Link
                 href={ROUTES.ASSISTANT}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
                   isActive(ROUTES.ASSISTANT) ? "text-foreground" : "text-muted-foreground"
                 )}
               >
+                <MessageSquare className="w-4 h-4" />
                 Assistente IA
               </Link>
             </>
@@ -127,37 +138,41 @@ export function Navbar() {
               <Link
                 href={ROUTES.HOME}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
                   isActive(ROUTES.HOME) ? "text-foreground" : "text-muted-foreground"
                 )}
               >
+                <Home className="w-4 h-4" />
                 Início
               </Link>
               <Link
                 href={ROUTES.TEMPLATES}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
                   isActive(ROUTES.TEMPLATES) ? "text-foreground" : "text-muted-foreground"
                 )}
               >
+                <FileText className="w-4 h-4" />
                 Templates
               </Link>
               <Link
                 href={ROUTES.GENERATOR}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
                   isActive(ROUTES.GENERATOR) ? "text-foreground" : "text-muted-foreground"
                 )}
               >
+                <Sparkles className="w-4 h-4" />
                 Gerador
               </Link>
               <Link
                 href={ROUTES.ASSISTANT}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground",
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
                   isActive(ROUTES.ASSISTANT) ? "text-foreground" : "text-muted-foreground"
                 )}
               >
+                <MessageSquare className="w-4 h-4" />
                 Assistente IA
               </Link>
             </>

@@ -1,16 +1,24 @@
 {
-  "name": "Cogniflow",
-  "short_name": "Cogniflow",
-  "description": "Desbloqueie sua criatividade oculta com inteligência artificial",
+  "name": "CogniFlow - Inteligência Criativa",
+  "short_name": "CogniFlow",
+  "description": "Transforme ideias em realidade com IA. Gerador de ideias, templates e prompts inteligentes.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
-  "theme_color": "#0ea5e9",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "/images/logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

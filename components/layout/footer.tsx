@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { ROUTES, SITE_CONFIG } from '@/utils/constants';
 
 export function Footer() {
@@ -12,10 +12,16 @@ export function Footer() {
           {/* Brand */}
           <div className="space-y-4">
             <Link href={ROUTES.HOME} className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyber-blue to-cyber-cyan">
-                <Sparkles className="h-5 w-5 text-white" />
+              <div className="relative h-8 w-8">
+                <Image
+                  src="/favicon.svg"
+                  alt="CogniFlow Logo"
+                  width={32}
+                  height={32}
+                  className="object-cover rounded-full"
+                />
               </div>
-              <span className="text-lg font-bold gradient-text">Cogniflow</span>
+              <span className="text-lg font-bold gradient-text">CogniFlow</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               Desbloqueie sua criatividade oculta com inteligência artificial.
