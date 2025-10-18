@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 const seo = getDefaultSEO();
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cogniflow.app';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cogniflow-beta.vercel.app';
 
 export const metadata: Metadata = {
   title: seo.title,
