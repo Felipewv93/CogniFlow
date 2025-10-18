@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: 'Cogniflow',
     images: [
       {
-        url: `/images/og-image.png?v=4`,
+        url: `/images/og-image.png?v=5`,
         width: 1200,
         height: 630,
         alt: 'Cogniflow - Plataforma de Inteligência Criativa',
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Cogniflow - Inteligência Criativa',
     description: 'Transforme suas ideias em realidade com IA. Gere prompts, templates e estruture conceitos criativos.',
-    images: [`/images/og-image.png?v=4`],
+    images: [`/images/og-image.png?v=5`],
     creator: '@cogniflow',
   },
   robots: {
