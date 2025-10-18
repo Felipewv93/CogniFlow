@@ -305,7 +305,7 @@ function NotificacoesTab({ profile, onUpdate }: { profile: any; onUpdate: () => 
       marketing: false,
     }
   );
-  const [saving, setSaving] = useState(false);
+  const [_saving, setSaving] = useState(false);
 
   const toggle = async (key: keyof typeof notifications) => {
     if (!user) return;

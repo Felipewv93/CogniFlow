@@ -153,7 +153,7 @@ export default function TemplatesPage() {
     setFilteredTemplates(filtered);
   };
 
-  const useTemplate = (template: Template) => {
+  const handleUseTemplate = (template: Template) => {
     toast.success(`Template "${template.title}" selecionado!`);
     // Redirecionar para dashboard com template
     router.push(`/dashboard?template=${template.id}`);
@@ -244,7 +244,7 @@ export default function TemplatesPage() {
                 </div>
 
                 <button
-                  onClick={() => useTemplate(template)}
+                  onClick={() => handleUseTemplate(template)}
                   className="w-full px-4 py-2 bg-gradient-to-r from-cyber-blue to-cyber-cyan text-white rounded-lg font-semibold hover:opacity-90 transition flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
