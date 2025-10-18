@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Search, Filter, Loader2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { Navbar } from '@/components/layout/navbar';
 
 interface Template {
   id: string;
@@ -159,18 +160,20 @@ export default function TemplatesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="container mx-auto px-4 max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <FileText className="w-8 h-8 text-cyber-blue" />
-            <h1 className="text-4xl font-bold">Biblioteca de Templates</h1>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="py-12">
+        <div className="container mx-auto px-4 max-w-7xl">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <FileText className="w-8 h-8 text-cyber-blue" />
+              <h1 className="text-4xl font-bold">Biblioteca de Templates</h1>
+            </div>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Explore templates prontos para acelerar seu trabalho criativo
+            </p>
           </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Explore templates prontos para acelerar seu trabalho criativo
-          </p>
-        </div>
 
         {/* Filters */}
         <div className="mb-8 space-y-4">
@@ -258,6 +261,7 @@ export default function TemplatesPage() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, User, Send, Loader2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { Navbar } from '@/components/layout/navbar';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -92,18 +93,20 @@ export default function AssistantPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4 max-w-5xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Bot className="w-8 h-8 text-cyber-blue" />
-            <h1 className="text-4xl font-bold">Assistente IA</h1>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="py-8">
+        <div className="container mx-auto px-4 max-w-5xl">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Bot className="w-8 h-8 text-cyber-blue" />
+              <h1 className="text-4xl font-bold">Assistente IA</h1>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Converse com nossa IA para refinar e expandir suas ideias
+            </p>
           </div>
-          <p className="text-muted-foreground text-lg">
-            Converse com nossa IA para refinar e expandir suas ideias
-          </p>
-        </div>
 
         {/* Chat Container */}
         <div className="border rounded-lg bg-card flex flex-col" style={{ height: 'calc(100vh - 300px)', minHeight: '500px' }}>
@@ -204,6 +207,7 @@ export default function AssistantPage() {
               💡 Pressione Enter para enviar, Shift+Enter para nova linha
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>

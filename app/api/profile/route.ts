@@ -7,19 +7,23 @@ export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies });
 
+    // Usar getSession ao invés de getUser para melhor compatibilidade
     const {
-      data: { user },
+      data: { session },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getSession();
 
-    if (authError || !user) {
+    if (authError || !session) {
+      console.error('Erro de autenticação:', authError || 'Sessão não encontrada');
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
+
+    const user = session.user;
 
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .single();
 
     if (profileError) {
@@ -32,9 +36,8 @@ export async function GET() {
     return NextResponse.json({
       profile: {
         id: profile.id,
-        user_id: profile.user_id,
-        full_name: profile.full_name,
-        email: user.email,
+        full_name: profile.full_name || profile.name,
+        email: profile.email,
         bio: profile.bio,
         company: profile.company,
         role: profile.role,
@@ -66,13 +69,15 @@ export async function PUT(request: Request) {
     const supabase = createRouteHandlerClient({ cookies });
 
     const {
-      data: { user },
+      data: { session },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getSession();
 
-    if (authError || !user) {
+    if (authError || !session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
+
+    const user = session.user;
 
     const body = await request.json();
     const {
@@ -99,7 +104,7 @@ export async function PUT(request: Request) {
     const { data, error } = await supabase
       .from('profiles')
       .update(updateData)
-      .eq('user_id', user.id)
+      .eq('id', user.id)
       .select()
       .single();
 

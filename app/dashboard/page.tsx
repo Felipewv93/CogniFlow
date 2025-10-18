@@ -1,35 +1,46 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Plus, Search, LogOut, Lightbulb } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Search, Lightbulb } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useIdeas } from '@/lib/hooks/use-ideas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { IdeaCard } from '@/components/dashboard/idea-card';
 import { IdeaForm } from '@/components/dashboard/idea-form';
-import { toast } from 'sonner';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { Navbar } from '@/components/layout/navbar';
 import type { Idea } from '@/lib/hooks/use-ideas';
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { user, signOut } = useAuth();
+  const supabase = createClientComponentClient();
+  const { user } = useAuth();
   const { ideas, loading, createIdea, updateIdea, deleteIdea, toggleFavorite } = useIdeas();
   const [showForm, setShowForm] = useState(false);
   const [editingIdea, setEditingIdea] = useState<Idea | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [profileName, setProfileName] = useState('');
 
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      toast.success('Logout realizado!');
-      router.push('/');
-    } catch (error) {
-      toast.error('Erro ao fazer logout');
-    }
-  };
+  // Buscar nome do perfil
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user?.id) return;
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile?.full_name) {
+        setProfileName(profile.full_name);
+      } else {
+        setProfileName(user.email?.split('@')[0] || 'Usuário');
+      }
+    };
+    loadProfile();
+  }, [user, supabase]);
 
   const handleCreateIdea = async (ideaData: any) => {
     await createIdea(ideaData);
@@ -68,19 +79,14 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       <div className="container-padding mx-auto max-w-7xl py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
-            <p className="text-muted-foreground">
-              Bem-vindo, {user?.email?.split('@')[0]}! 👋
-            </p>
-          </div>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Bem-vindo, {profileName}! 👋
+          </p>
         </div>
 
         {/* Stats */}

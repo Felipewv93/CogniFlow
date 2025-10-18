@@ -29,11 +29,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Escutar mudanças de autenticação
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
+      
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        setUser(session?.user ?? null);
+      } else if (event === 'USER_UPDATED') {
+        setUser(session?.user ?? null);
+      }
+      
+      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // Renovar sessão a cada 5 minutos
+    const refreshInterval = setInterval(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        await supabase.auth.refreshSession();
+        console.log('Session refreshed');
+      }
+    }, 5 * 60 * 1000); // 5 minutos
+
+    return () => {
+      subscription.unsubscribe();
+      clearInterval(refreshInterval);
+    };
   }, []);
 
   const signUp = async (email: string, password: string) => {

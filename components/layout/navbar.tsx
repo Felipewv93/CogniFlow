@@ -1,0 +1,367 @@
+'use client';
+
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { Sparkles, Menu, User, Settings, LogOut, LayoutDashboard } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/helpers/utils';
+import { ROUTES } from '@/utils/constants';
+import { useAuth } from '@/lib/auth-context';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { toast } from 'sonner';
+
+export function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, signOut } = useAuth();
+  const supabase = createClientComponentClient();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [profileName, setProfileName] = useState('');
+
+  // Buscar nome do perfil quando logado
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user?.id) return;
+      
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      
+      if (profile?.full_name) {
+        setProfileName(profile.full_name);
+      } else {
+        setProfileName(user.email?.split('@')[0] || 'Usuário');
+      }
+    };
+    
+    loadProfile();
+  }, [user, supabase]);
+
+  // Fechar menu ao clicar fora
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (showUserMenu && !target.closest('.user-menu-container')) {
+        setShowUserMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showUserMenu]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success('Logout realizado!');
+      router.push('/');
+    } catch (error) {
+      toast.error('Erro ao fazer logout');
+    }
+  };
+
+  const isActive = (path: string) => pathname === path;
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container-padding mx-auto flex h-16 max-w-7xl items-center justify-between">
+        {/* Logo */}
+        <Link href={ROUTES.HOME} className="flex items-center space-x-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyber-blue to-cyber-cyan">
+            <Sparkles className="h-6 w-6 text-white" />
+          </div>
+          <span className="text-xl font-bold gradient-text">Cogniflow</span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-6">
+          {user ? (
+            // Links para usuários logados
+            <>
+              <Link
+                href={ROUTES.DASHBOARD}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
+                  isActive(ROUTES.DASHBOARD) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
+              <Link
+                href={ROUTES.TEMPLATES}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground",
+                  isActive(ROUTES.TEMPLATES) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                Templates
+              </Link>
+              <Link
+                href={ROUTES.GENERATOR}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground",
+                  isActive(ROUTES.GENERATOR) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                Gerador
+              </Link>
+              <Link
+                href={ROUTES.ASSISTANT}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground",
+                  isActive(ROUTES.ASSISTANT) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                Assistente IA
+              </Link>
+            </>
+          ) : (
+            // Links para visitantes
+            <>
+              <Link
+                href={ROUTES.HOME}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground",
+                  isActive(ROUTES.HOME) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                Início
+              </Link>
+              <Link
+                href={ROUTES.TEMPLATES}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground",
+                  isActive(ROUTES.TEMPLATES) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                Templates
+              </Link>
+              <Link
+                href={ROUTES.GENERATOR}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground",
+                  isActive(ROUTES.GENERATOR) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                Gerador
+              </Link>
+              <Link
+                href={ROUTES.ASSISTANT}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-foreground",
+                  isActive(ROUTES.ASSISTANT) ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                Assistente IA
+              </Link>
+            </>
+          )}
+        </nav>
+
+        {/* Right Side - Theme Toggle + Auth */}
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
+          
+          {user ? (
+            // Menu do usuário logado
+            <div className="hidden md:block relative user-menu-container">
+              <Button
+                variant="outline"
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center gap-2"
+              >
+                <User className="w-4 h-4" />
+                <span>{profileName}</span>
+              </Button>
+              
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-56 bg-background border rounded-lg shadow-lg py-2 z-50">
+                  <div className="px-4 py-2 border-b">
+                    <p className="text-sm font-medium">{profileName}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                  </div>
+                  
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      router.push(ROUTES.DASHBOARD);
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-muted flex items-center gap-3 transition text-sm"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      router.push('/settings');
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-muted flex items-center gap-3 transition text-sm"
+                  >
+                    <Settings className="w-4 h-4" />
+                    Configurações
+                  </button>
+                  
+                  <div className="border-t my-2"></div>
+                  
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      handleLogout();
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-muted flex items-center gap-3 text-red-600 transition text-sm"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sair
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            // Botões de login/cadastro para visitantes
+            <div className="hidden md:flex items-center space-x-2">
+              <Button variant="ghost" asChild>
+                <Link href={ROUTES.AUTH.LOGIN}>Entrar</Link>
+              </Button>
+              <Button variant="cyber" asChild>
+                <Link href={ROUTES.AUTH.SIGNUP}>Começar Grátis</Link>
+              </Button>
+            </div>
+          )}
+
+          {/* Mobile menu button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div
+        className={cn(
+          'md:hidden border-t transition-all duration-300',
+          mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+        )}
+      >
+        <nav className="container-padding py-4 flex flex-col space-y-3">
+          {user ? (
+            // Menu mobile para usuários logados
+            <>
+              <div className="pb-3 border-b">
+                <p className="text-sm font-medium">{profileName}</p>
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+              </div>
+              
+              <Link
+                href={ROUTES.DASHBOARD}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
+              <Link
+                href={ROUTES.TEMPLATES}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Templates
+              </Link>
+              <Link
+                href={ROUTES.GENERATOR}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Gerador
+              </Link>
+              <Link
+                href={ROUTES.ASSISTANT}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Assistente IA
+              </Link>
+              
+              <div className="border-t pt-3 flex flex-col space-y-2">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    router.push('/settings');
+                  }}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Configurações
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-red-600 hover:text-red-600"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sair
+                </Button>
+              </div>
+            </>
+          ) : (
+            // Menu mobile para visitantes
+            <>
+              <Link
+                href={ROUTES.HOME}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Início
+              </Link>
+              <Link
+                href={ROUTES.TEMPLATES}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Templates
+              </Link>
+              <Link
+                href={ROUTES.GENERATOR}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Gerador
+              </Link>
+              <Link
+                href={ROUTES.ASSISTANT}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Assistente IA
+              </Link>
+              <div className="pt-2 flex flex-col space-y-2">
+                <Button variant="ghost" asChild className="w-full">
+                  <Link href={ROUTES.AUTH.LOGIN}>Entrar</Link>
+                </Button>
+                <Button variant="cyber" asChild className="w-full">
+                  <Link href={ROUTES.AUTH.SIGNUP}>Começar Grátis</Link>
+                </Button>
+              </div>
+            </>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
+}

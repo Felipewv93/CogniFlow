@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Sparkles, Loader2, Lightbulb, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { Navbar } from '@/components/layout/navbar';
 
 interface Idea {
   title: string;
@@ -69,18 +70,20 @@ export default function GeneratorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="container mx-auto px-4 max-w-6xl">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="w-8 h-8 text-cyber-blue" />
-            <h1 className="text-4xl font-bold">Gerador de Ideias com IA</h1>
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="py-12">
+        <div className="container mx-auto px-4 max-w-6xl">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="w-8 h-8 text-cyber-blue" />
+              <h1 className="text-4xl font-bold">Gerador de Ideias com IA</h1>
+            </div>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Descreva o que você precisa e deixe nossa IA gerar ideias criativas e detalhadas para você
+            </p>
           </div>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Descreva o que você precisa e deixe nossa IA gerar ideias criativas e detalhadas para você
-          </p>
-        </div>
 
         {/* Form */}
         <div className="bg-card border rounded-lg p-6 mb-8">
@@ -228,6 +231,7 @@ export default function GeneratorPage() {
             </p>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

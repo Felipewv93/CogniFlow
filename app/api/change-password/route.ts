@@ -8,13 +8,15 @@ export async function POST(request: Request) {
     const supabase = createRouteHandlerClient({ cookies });
 
     const {
-      data: { user },
+      data: { session },
       error: authError,
-    } = await supabase.auth.getUser();
+    } = await supabase.auth.getSession();
 
-    if (authError || !user) {
+    if (authError || !session) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
     }
+
+    const user = session.user;
 
     const body = await request.json();
     const { currentPassword, newPassword } = body;
