@@ -12,6 +12,7 @@ const inter = Inter({
 });
 
 const seo = getDefaultSEO();
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cogniflow.app';
 
 export const metadata: Metadata = {
   title: seo.title,
@@ -28,9 +29,30 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Cogniflow Team' }],
   creator: 'Cogniflow',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://cogniflow.app'),
-  openGraph: seo.openGraph,
-  twitter: seo.twitter,
+  metadataBase: new URL(siteUrl),
+  openGraph: {
+    title: 'Cogniflow - Inteligência Criativa',
+    description: 'Transforme suas ideias em realidade com IA. Gere prompts, templates e estruture conceitos criativos.',
+    url: siteUrl,
+    siteName: 'Cogniflow',
+    images: [
+      {
+        url: '/images/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Cogniflow - Plataforma de Inteligência Criativa',
+      },
+    ],
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Cogniflow - Inteligência Criativa',
+    description: 'Transforme suas ideias em realidade com IA. Gere prompts, templates e estruture conceitos criativos.',
+    images: ['/images/og-image.png'],
+    creator: '@cogniflow',
+  },
   robots: {
     index: true,
     follow: true,
