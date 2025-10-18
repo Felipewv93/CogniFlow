@@ -26,6 +26,7 @@ tsconfig.tsbuildinfo
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
 
 # ===================================
 # 🐛 Debug & Logs
@@ -74,11 +75,5 @@ $RECYCLE.BIN/
 # ===================================
 *.bak
 *.cache
-
-CHECKLIST.md
-PROJECT_SUMMARY.md
-RELATORIO_COMPLETO.md
-SUPABASE_SETUP.md
-OPENAI_SETUP.md
 
 docs/
