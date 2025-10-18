@@ -1,14 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// DeepSeek API - Compatível com OpenAI SDK
-const client = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY,
-  baseURL: process.env.DEEPSEEK_API_KEY 
-    ? 'https://api.deepseek.com'
-    : 'https://api.openai.com/v1',
-});
-
 // Modo DEMO - Mude para false quando tiver a API key
 const DEMO_MODE = !process.env.DEEPSEEK_API_KEY && !process.env.OPENAI_API_KEY;
 
@@ -75,6 +67,8 @@ export async function POST(request: NextRequest) {
   try {
     const { messages } = await request.json();
 
+    console.log('📨 Chat API - Mensagens recebidas:', messages?.length);
+
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
         { error: 'Mensagens são obrigatórias' },
@@ -84,11 +78,13 @@ export async function POST(request: NextRequest) {
 
     // MODO DEMO - Respostas contextuais e personalizadas
     if (DEMO_MODE) {
+      console.log('🎭 Modo DEMO ativo');
       await new Promise((resolve) => setTimeout(resolve, 800 + Math.random() * 400)); // Delay variável realista
       
       const lastMessage = messages[messages.length - 1];
       const contextualResponse = generateContextualResponse(lastMessage.content);
       
+      console.log('✅ Resposta gerada com sucesso');
       return NextResponse.json({
         message: contextualResponse,
         role: 'assistant',
@@ -115,6 +111,14 @@ Sempre que possível:
 4. Divida problemas complexos em etapas menores
 5. Celebre progressos e ideias do usuário`,
     };
+
+    // Criar client apenas quando necessário
+    const client = new OpenAI({
+      apiKey: process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY,
+      baseURL: process.env.DEEPSEEK_API_KEY 
+        ? 'https://api.deepseek.com'
+        : 'https://api.openai.com/v1',
+    });
 
     const completion = await client.chat.completions.create({
       model: process.env.DEEPSEEK_API_KEY ? 'deepseek-chat' : 'gpt-4o',

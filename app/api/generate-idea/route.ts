@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-// DeepSeek API - Compatível com OpenAI SDK
-const client = new OpenAI({
-  apiKey: process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY,
-  baseURL: process.env.DEEPSEEK_API_KEY 
-    ? 'https://api.deepseek.com'
-    : 'https://api.openai.com/v1',
-});
-
 // Modo DEMO - Mude para false quando tiver a API key
 const DEMO_MODE = !process.env.DEEPSEEK_API_KEY && !process.env.OPENAI_API_KEY;
 
 export async function POST(request: NextRequest) {
   try {
     const { prompt, category, tone } = await request.json();
+
+    console.log('💡 Generate Idea API - Prompt:', prompt?.substring(0, 50));
 
     if (!prompt) {
       return NextResponse.json(
@@ -25,6 +19,7 @@ export async function POST(request: NextRequest) {
 
     // MODO DEMO - Retorna ideias personalizadas baseadas no prompt
     if (DEMO_MODE) {
+      console.log('🎭 Modo DEMO ativo');
       await new Promise((resolve) => setTimeout(resolve, 1500)); // Simula delay da API
       
       // Detecta palavras-chave para personalizar as ideias
@@ -264,6 +259,7 @@ export async function POST(request: NextRequest) {
             ],
       });
       
+      console.log('✅ Ideias geradas com sucesso (DEMO)');
       return NextResponse.json({ ideas });
     }
 
@@ -293,6 +289,14 @@ Formato de resposta em JSON:
     }
   ]
 }`;
+
+    // Criar client apenas quando necessário
+    const client = new OpenAI({
+      apiKey: process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY,
+      baseURL: process.env.DEEPSEEK_API_KEY 
+        ? 'https://api.deepseek.com'
+        : 'https://api.openai.com/v1',
+    });
 
     const completion = await client.chat.completions.create({
       model: process.env.DEEPSEEK_API_KEY ? 'deepseek-chat' : 'gpt-4o',

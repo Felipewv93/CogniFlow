@@ -55,14 +55,16 @@ export default function GeneratorPage() {
         body: JSON.stringify({ prompt, category, tone }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Erro ao gerar ideias');
+        throw new Error(data.error || 'Erro ao gerar ideias');
       }
 
-      const data = await response.json();
       setIdeas(data.ideas || []);
       toast.success('Ideias geradas com sucesso!');
     } catch (error: any) {
+      console.error('Erro ao gerar ideias:', error);
       toast.error(error.message || 'Erro ao gerar ideias');
     } finally {
       setLoading(false);

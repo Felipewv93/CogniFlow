@@ -54,11 +54,11 @@ export default function AssistantPage() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Erro ao enviar mensagem');
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erro ao enviar mensagem');
+      }
 
       setMessages((prev) => [
         ...prev,
@@ -68,7 +68,11 @@ export default function AssistantPage() {
         },
       ]);
     } catch (error: any) {
+      console.error('Erro no chat:', error);
       toast.error(error.message || 'Erro ao enviar mensagem');
+      
+      // Remove a mensagem do usuário se deu erro
+      setMessages((prev) => prev.slice(0, -1));
     } finally {
       setLoading(false);
     }
