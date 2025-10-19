@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Search, Filter, Loader2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/lib/auth-context';
 import { Navbar } from '@/components/layout/navbar';
 
 interface Template {
@@ -103,6 +104,7 @@ export default function TemplatesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     loadTemplates();
@@ -154,6 +156,12 @@ export default function TemplatesPage() {
   };
 
   const handleUseTemplate = (template: Template) => {
+    if (authLoading) return;
+    if (!user) {
+      toast.info('Faça login para usar um template!');
+      router.push('/auth/login');
+      return;
+    }
     toast.success(`Template "${template.title}" selecionado!`);
     // Redirecionar para dashboard com template
     router.push(`/dashboard?template=${template.id}`);
