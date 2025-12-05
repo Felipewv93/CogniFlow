@@ -5,7 +5,18 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Menu, User, Settings, LogOut, LayoutDashboard, Home, FileText, Sparkles, MessageSquare } from 'lucide-react';
+import {
+  Menu,
+  User,
+  Settings,
+  LogOut,
+  LayoutDashboard,
+  Home,
+  FileText,
+  Sparkles,
+  MessageSquare,
+  Users,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/helpers/utils';
 import { ROUTES } from '@/utils/constants';
@@ -26,20 +37,20 @@ export function Navbar() {
   useEffect(() => {
     const loadProfile = async () => {
       if (!user?.id) return;
-      
+
       const { data: profile } = await supabase
         .from('profiles')
         .select('full_name')
         .eq('id', user.id)
         .single();
-      
+
       if (profile?.full_name) {
         setProfileName(profile.full_name);
       } else {
         setProfileName(user.email?.split('@')[0] || 'Usuário');
       }
     };
-    
+
     loadProfile();
   }, [user, supabase]);
 
@@ -79,57 +90,67 @@ export function Navbar() {
               alt="CogniFlow Logo"
               width={40}
               height={40}
-              className="object-cover rounded-full"
+              className="rounded-full object-cover"
               priority
             />
           </div>
-          <span className="text-xl font-bold gradient-text">CogniFlow</span>
+          <span className="gradient-text text-xl font-bold">CogniFlow</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden items-center space-x-6 md:flex">
           {user ? (
             // Links para usuários logados
             <>
               <Link
                 href={ROUTES.DASHBOARD}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.DASHBOARD) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.DASHBOARD) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <LayoutDashboard className="w-4 h-4" />
+                <LayoutDashboard className="h-4 w-4" />
                 Dashboard
               </Link>
               <Link
                 href={ROUTES.TEMPLATES}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.TEMPLATES) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.TEMPLATES) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <FileText className="w-4 h-4" />
+                <FileText className="h-4 w-4" />
                 Templates
               </Link>
               <Link
                 href={ROUTES.GENERATOR}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.GENERATOR) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.GENERATOR) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="h-4 w-4" />
                 Gerador
               </Link>
               <Link
                 href={ROUTES.ASSISTANT}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.ASSISTANT) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.ASSISTANT) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <MessageSquare className="w-4 h-4" />
+                <MessageSquare className="h-4 w-4" />
                 Assistente IA
+              </Link>
+              <Link
+                href="/teams"
+                className={cn(
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  pathname?.startsWith('/teams') ? 'text-foreground' : 'text-muted-foreground'
+                )}
+              >
+                <Users className="h-4 w-4" />
+                Times
               </Link>
             </>
           ) : (
@@ -138,41 +159,41 @@ export function Navbar() {
               <Link
                 href={ROUTES.HOME}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.HOME) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.HOME) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <Home className="w-4 h-4" />
+                <Home className="h-4 w-4" />
                 Início
               </Link>
               <Link
                 href={ROUTES.TEMPLATES}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.TEMPLATES) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.TEMPLATES) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <FileText className="w-4 h-4" />
+                <FileText className="h-4 w-4" />
                 Templates
               </Link>
               <Link
                 href={ROUTES.GENERATOR}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.GENERATOR) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.GENERATOR) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <Sparkles className="w-4 h-4" />
+                <Sparkles className="h-4 w-4" />
                 Gerador
               </Link>
               <Link
                 href={ROUTES.ASSISTANT}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-foreground flex items-center gap-2",
-                  isActive(ROUTES.ASSISTANT) ? "text-foreground" : "text-muted-foreground"
+                  'flex items-center gap-2 text-sm font-medium transition-colors hover:text-foreground',
+                  isActive(ROUTES.ASSISTANT) ? 'text-foreground' : 'text-muted-foreground'
                 )}
               >
-                <MessageSquare className="w-4 h-4" />
+                <MessageSquare className="h-4 w-4" />
                 Assistente IA
               </Link>
             </>
@@ -182,58 +203,58 @@ export function Navbar() {
         {/* Right Side - Theme Toggle + Auth */}
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          
+
           {user ? (
             // Menu do usuário logado
-            <div className="hidden md:block relative user-menu-container">
+            <div className="user-menu-container relative hidden md:block">
               <Button
                 variant="outline"
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="flex items-center gap-2"
               >
-                <User className="w-4 h-4" />
+                <User className="h-4 w-4" />
                 <span>{profileName}</span>
               </Button>
-              
+
               {showUserMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-background border rounded-lg shadow-lg py-2 z-50">
-                  <div className="px-4 py-2 border-b">
+                <div className="absolute right-0 z-50 mt-2 w-56 rounded-lg border bg-background py-2 shadow-lg">
+                  <div className="border-b px-4 py-2">
                     <p className="text-sm font-medium">{profileName}</p>
-                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    <p className="truncate text-xs text-muted-foreground">{user.email}</p>
                   </div>
-                  
+
                   <button
                     onClick={() => {
                       setShowUserMenu(false);
                       router.push(ROUTES.DASHBOARD);
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-muted flex items-center gap-3 transition text-sm"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition hover:bg-muted"
                   >
-                    <LayoutDashboard className="w-4 h-4" />
+                    <LayoutDashboard className="h-4 w-4" />
                     Dashboard
                   </button>
-                  
+
                   <button
                     onClick={() => {
                       setShowUserMenu(false);
                       router.push('/settings');
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-muted flex items-center gap-3 transition text-sm"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition hover:bg-muted"
                   >
-                    <Settings className="w-4 h-4" />
+                    <Settings className="h-4 w-4" />
                     Configurações
                   </button>
-                  
-                  <div className="border-t my-2"></div>
-                  
+
+                  <div className="my-2 border-t"></div>
+
                   <button
                     onClick={() => {
                       setShowUserMenu(false);
                       handleLogout();
                     }}
-                    className="w-full px-4 py-2 text-left hover:bg-muted flex items-center gap-3 text-red-600 transition text-sm"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-red-600 transition hover:bg-muted"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="h-4 w-4" />
                     Sair
                   </button>
                 </div>
@@ -241,7 +262,7 @@ export function Navbar() {
             </div>
           ) : (
             // Botões de login/cadastro para visitantes
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden items-center space-x-2 md:flex">
               <Button variant="ghost" asChild>
                 <Link href={ROUTES.AUTH.LOGIN}>Entrar</Link>
               </Button>
@@ -266,25 +287,25 @@ export function Navbar() {
       {/* Mobile Navigation */}
       <div
         className={cn(
-          'md:hidden border-t transition-all duration-300',
-          mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+          'border-t transition-all duration-300 md:hidden',
+          mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 overflow-hidden opacity-0'
         )}
       >
-        <nav className="container-padding py-4 flex flex-col space-y-3">
+        <nav className="container-padding flex flex-col space-y-3 py-4">
           {user ? (
             // Menu mobile para usuários logados
             <>
-              <div className="pb-3 border-b">
+              <div className="border-b pb-3">
                 <p className="text-sm font-medium">{profileName}</p>
-                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                <p className="truncate text-xs text-muted-foreground">{user.email}</p>
               </div>
-              
+
               <Link
                 href={ROUTES.DASHBOARD}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2"
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <LayoutDashboard className="w-4 h-4" />
+                <LayoutDashboard className="h-4 w-4" />
                 Dashboard
               </Link>
               <Link
@@ -308,8 +329,8 @@ export function Navbar() {
               >
                 Assistente IA
               </Link>
-              
-              <div className="border-t pt-3 flex flex-col space-y-2">
+
+              <div className="flex flex-col space-y-2 border-t pt-3">
                 <Button
                   variant="ghost"
                   className="w-full justify-start"
@@ -318,7 +339,7 @@ export function Navbar() {
                     router.push('/settings');
                   }}
                 >
-                  <Settings className="w-4 h-4 mr-2" />
+                  <Settings className="mr-2 h-4 w-4" />
                   Configurações
                 </Button>
                 <Button
@@ -329,7 +350,7 @@ export function Navbar() {
                     handleLogout();
                   }}
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
+                  <LogOut className="mr-2 h-4 w-4" />
                   Sair
                 </Button>
               </div>
@@ -365,7 +386,7 @@ export function Navbar() {
               >
                 Assistente IA
               </Link>
-              <div className="pt-2 flex flex-col space-y-2">
+              <div className="flex flex-col space-y-2 pt-2">
                 <Button variant="ghost" asChild className="w-full">
                   <Link href={ROUTES.AUTH.LOGIN}>Entrar</Link>
                 </Button>

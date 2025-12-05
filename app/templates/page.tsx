@@ -18,7 +18,24 @@ interface Template {
   created_at: string;
 }
 
-const CATEGORIES = ['all', 'startup', 'design', 'feature', 'marketing', 'content', 'business'];
+const CATEGORIES = [
+  { id: 'all', name: 'Todos', color: 'from-gray-500 to-gray-600' },
+  { id: 'startup', name: 'Startup', color: 'from-pink-500 to-purple-500' },
+  { id: 'design', name: 'Design', color: 'from-blue-500 to-cyan-500' },
+  { id: 'feature', name: 'Produto', color: 'from-green-500 to-emerald-500' },
+  { id: 'marketing', name: 'Marketing', color: 'from-orange-500 to-red-500' },
+  { id: 'content', name: 'Conteúdo', color: 'from-yellow-500 to-amber-500' },
+  { id: 'business', name: 'Negócios', color: 'from-indigo-500 to-violet-500' },
+];
+
+const CATEGORY_COLORS: Record<string, string> = {
+  startup: 'from-pink-500 to-purple-500',
+  design: 'from-blue-500 to-cyan-500',
+  feature: 'from-green-500 to-emerald-500',
+  marketing: 'from-orange-500 to-red-500',
+  content: 'from-yellow-500 to-amber-500',
+  business: 'from-indigo-500 to-violet-500',
+};
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -33,16 +50,15 @@ export default function TemplatesPage() {
     if (!authLoading) {
       loadTemplates();
     }
-  }, [selectedCategory, authLoading]);
+  }, [authLoading]);
 
   useEffect(() => {
     filterTemplates();
-  }, [searchQuery, templates]);
+  }, [searchQuery, templates, selectedCategory]);
 
   const loadTemplates = async () => {
     setLoading(true);
     try {
-      // Usar templates com dados completos
       const allTemplates = TEMPLATES_DATA.map((t) => ({
         id: t.id,
         title: t.title,
@@ -53,12 +69,7 @@ export default function TemplatesPage() {
         created_at: t.created_at,
       }));
 
-      const filtered =
-        selectedCategory === 'all'
-          ? allTemplates
-          : allTemplates.filter((t) => t.category === selectedCategory);
-
-      setTemplates(filtered);
+      setTemplates(allTemplates);
       toast.success('Templates carregados');
     } catch (error: any) {
       toast.error('Erro ao carregar templates');
@@ -69,18 +80,22 @@ export default function TemplatesPage() {
   };
 
   const filterTemplates = () => {
-    if (!searchQuery.trim()) {
-      setFilteredTemplates(templates);
-      return;
+    let filtered = templates;
+
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter((t) => t.category === selectedCategory);
     }
 
-    const query = searchQuery.toLowerCase();
-    const filtered = templates.filter(
-      (t) =>
-        t.title.toLowerCase().includes(query) ||
-        t.description.toLowerCase().includes(query) ||
-        t.tags.some((tag) => tag.toLowerCase().includes(query))
-    );
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (t) =>
+          t.title.toLowerCase().includes(query) ||
+          t.description.toLowerCase().includes(query) ||
+          t.tags.some((tag) => tag.toLowerCase().includes(query))
+      );
+    }
+
     setFilteredTemplates(filtered);
   };
 
@@ -128,15 +143,15 @@ export default function TemplatesPage() {
               <Filter className="h-5 w-5 text-muted-foreground" />
               {CATEGORIES.map((category) => (
                 <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
                   className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                    selectedCategory === category
-                      ? 'bg-gradient-to-r from-cyber-blue to-cyber-cyan text-white'
+                    selectedCategory === category.id
+                      ? `bg-gradient-to-r ${category.color} text-white`
                       : 'border hover:bg-muted/50'
                   }`}
                 >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                  {category.name}
                 </button>
               ))}
             </div>
@@ -147,50 +162,128 @@ export default function TemplatesPage() {
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-cyber-blue" />
             </div>
-          ) : filteredTemplates.length > 0 ? (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredTemplates.map((template) => (
-                <div
-                  key={template.id}
-                  className="rounded-lg border bg-card p-6 transition-all hover:border-cyber-blue/50"
-                >
-                  <div className="mb-3">
-                    <span className="rounded-full bg-cyber-blue/10 px-3 py-1 text-xs font-medium text-cyber-blue">
-                      {template.category}
-                    </span>
-                  </div>
-
-                  <h3 className="mb-2 text-xl font-bold">{template.title}</h3>
-
-                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
-                    {template.description}
-                  </p>
-
-                  <div className="mb-4 flex flex-wrap gap-2">
-                    {template.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="rounded bg-muted px-2 py-1 text-xs">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={() => handleUseTemplate(template)}
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-cyber-blue to-cyber-cyan px-4 py-2 font-semibold text-white transition hover:opacity-90"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Usar Template
-                  </button>
-                </div>
-              ))}
-            </div>
           ) : (
-            <div className="py-12 text-center">
-              <FileText className="mx-auto mb-4 h-16 w-16 text-muted-foreground/50" />
-              <p className="text-muted-foreground">
-                Nenhum template encontrado. Tente outra busca.
-              </p>
-            </div>
+            <>
+              {selectedCategory === 'all' ? (
+                // Mostrar por categoria
+                CATEGORIES.filter((cat) => cat.id !== 'all').map((category) => {
+                  const categoryTemplates = filteredTemplates.filter(
+                    (t) => t.category === category.id
+                  );
+
+                  if (categoryTemplates.length === 0) return null;
+
+                  return (
+                    <div key={category.id} className="mb-12">
+                      <div className="mb-6 flex items-center gap-3">
+                        <h2
+                          className={`bg-gradient-to-r ${category.color} bg-clip-text text-2xl font-bold text-transparent`}
+                        >
+                          {category.name}
+                        </h2>
+                        <span className="text-sm text-muted-foreground">
+                          ({categoryTemplates.length})
+                        </span>
+                      </div>
+
+                      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                        {categoryTemplates.map((template) => (
+                          <div
+                            key={template.id}
+                            className="group rounded-lg border bg-card p-6 transition-all hover:border-transparent hover:shadow-lg"
+                          >
+                            <div className="mb-3">
+                              <span
+                                className={`rounded-full bg-gradient-to-r ${
+                                  CATEGORY_COLORS[template.category]
+                                } px-3 py-1 text-xs font-medium text-white`}
+                              >
+                                {template.category}
+                              </span>
+                            </div>
+
+                            <h3 className="mb-2 text-xl font-bold">{template.title}</h3>
+
+                            <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+                              {template.description}
+                            </p>
+
+                            <div className="mb-4 flex flex-wrap gap-2">
+                              {template.tags.slice(0, 3).map((tag) => (
+                                <span key={tag} className="rounded bg-muted px-2 py-1 text-xs">
+                                  #{tag}
+                                </span>
+                              ))}
+                            </div>
+
+                            <button
+                              onClick={() => handleUseTemplate(template)}
+                              className={`flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r ${
+                                CATEGORY_COLORS[template.category]
+                              } px-4 py-2 font-semibold text-white transition hover:opacity-90`}
+                            >
+                              <Plus className="h-4 w-4" />
+                              Usar Template
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : filteredTemplates.length > 0 ? (
+                // Mostrar categoria selecionada
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredTemplates.map((template) => (
+                    <div
+                      key={template.id}
+                      className="rounded-lg border bg-card p-6 transition-all hover:border-transparent hover:shadow-lg"
+                    >
+                      <div className="mb-3">
+                        <span
+                          className={`rounded-full bg-gradient-to-r ${
+                            CATEGORY_COLORS[template.category]
+                          } px-3 py-1 text-xs font-medium text-white`}
+                        >
+                          {template.category}
+                        </span>
+                      </div>
+
+                      <h3 className="mb-2 text-xl font-bold">{template.title}</h3>
+
+                      <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">
+                        {template.description}
+                      </p>
+
+                      <div className="mb-4 flex flex-wrap gap-2">
+                        {template.tags.slice(0, 3).map((tag) => (
+                          <span key={tag} className="rounded bg-muted px-2 py-1 text-xs">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => handleUseTemplate(template)}
+                        className={`flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r ${
+                          CATEGORY_COLORS[template.category]
+                        } px-4 py-2 font-semibold text-white transition hover:opacity-90`}
+                      >
+                        <Plus className="h-4 w-4" />
+                        Usar Template
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-12 text-center">
+                  <FileText className="mx-auto mb-4 h-16 w-16 text-muted-foreground/50" />
+                  <p className="text-muted-foreground">
+                    Nenhum template encontrado. Tente outra busca.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
