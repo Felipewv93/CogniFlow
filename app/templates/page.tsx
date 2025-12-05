@@ -30,8 +30,10 @@ export default function TemplatesPage() {
   const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    loadTemplates();
-  }, [selectedCategory]);
+    if (!authLoading) {
+      loadTemplates();
+    }
+  }, [selectedCategory, authLoading]);
 
   useEffect(() => {
     filterTemplates();
@@ -83,7 +85,11 @@ export default function TemplatesPage() {
   };
 
   const handleUseTemplate = (template: Template) => {
-    // Redirecionar para página de detalhes do template
+    if (!user) {
+      toast.error('Faça login para usar templates');
+      router.push('/auth/login');
+      return;
+    }
     router.push(`/templates/${template.id}`);
   };
 
@@ -137,7 +143,7 @@ export default function TemplatesPage() {
           </div>
 
           {/* Templates Grid */}
-          {loading ? (
+          {loading || authLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-cyber-blue" />
             </div>
