@@ -5,19 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/layout/navbar';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/supabase/client';
-import {
-  Users,
-  Plus,
-  FileText,
-  Lightbulb,
-  TrendingUp,
-  ArrowLeft,
-  Mail,
-  UserPlus,
-  Trash2,
-  Crown,
-  Settings,
-} from 'lucide-react';
+import { Users, Plus, FileText, Lightbulb, Crown } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Team {

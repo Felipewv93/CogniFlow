@@ -17,10 +17,6 @@ import {
   FileText,
   Activity,
   Settings,
-  MoreVertical,
-  Copy,
-  Download,
-  ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
