@@ -29,6 +29,7 @@ export function useIdeas() {
       const { data, error } = await supabase
         .from('ideas')
         .select('*')
+        .is('team_id', null)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -52,7 +53,7 @@ export function useIdeas() {
         .single();
 
       if (error) throw error;
-      
+
       setIdeas([data, ...ideas]);
       toast.success('Ideia criada com sucesso!');
       return data;

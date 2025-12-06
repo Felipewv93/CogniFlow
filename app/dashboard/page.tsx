@@ -393,7 +393,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Filtros Avançados */}
-          <div className="grid grid-cols-1 gap-4 rounded-lg border bg-card p-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 rounded-lg border bg-card p-4 transition hover:shadow-lg md:grid-cols-3">
             <div>
               <label className="mb-2 block text-sm font-medium">Categoria</label>
               <select

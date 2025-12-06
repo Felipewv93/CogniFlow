@@ -26,9 +26,7 @@ export function HowItWorks() {
     <section className="section-spacing">
       <div className="container-padding mx-auto max-w-7xl">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
-            Como Funciona
-          </h2>
+          <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Como Funciona</h2>
           <p className="text-lg text-muted-foreground">
             Três passos simples para transformar ideias em ação
           </p>
@@ -36,7 +34,10 @@ export function HowItWorks() {
 
         <div className="grid gap-8 md:grid-cols-3">
           {steps.map((step) => (
-            <Card key={step.title} className="text-center">
+            <Card
+              key={step.title}
+              className="text-center transition hover:border-cyber-cyan/50 hover:shadow-lg"
+            >
               <CardContent className="pt-6">
                 <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-cyber-blue to-cyber-cyan">
                   <step.icon className="h-8 w-8 text-white" />

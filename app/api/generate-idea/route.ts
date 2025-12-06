@@ -5,7 +5,7 @@ const DEMO_MODE = !process.env.GEMINI_API_KEY;
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, category, tone } = await request.json();
+    const { prompt, category, tone, teamId } = await request.json();
 
     console.log('💡 Generate Idea API - Prompt:', prompt?.substring(0, 50));
 
@@ -260,7 +260,7 @@ export async function POST(request: NextRequest) {
       });
 
       console.log('✅ Ideias geradas com sucesso (DEMO)');
-      return NextResponse.json({ ideas });
+      return NextResponse.json({ ideas, teamId });
     }
 
     // MODO PRODUÇÃO - Usa Google Gemini 2.0 Flash (gratuito!)
@@ -321,7 +321,7 @@ Formato de resposta em JSON:
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     const ideas = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
 
-    return NextResponse.json(ideas);
+    return NextResponse.json({ ...ideas, teamId });
   } catch (error: any) {
     console.error('Erro ao gerar ideias:', error);
     return NextResponse.json({ error: error.message || 'Erro ao gerar ideias' }, { status: 500 });

@@ -19,8 +19,15 @@ export default function TemplateDetailPage() {
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
   const [activeTab, setActiveTab] = useState<'resume' | 'personalize' | 'content'>('resume');
   const [generatedContent, setGeneratedContent] = useState('');
+  const [teamId, setTeamId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Capturar teamId da URL
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      setTeamId(urlParams.get('team'));
+    }
+
     const templateId = params?.id as string;
     const found = TEMPLATES_DATA.find((t) => t.id === templateId);
     setTemplate(found || null);
@@ -75,7 +82,7 @@ export default function TemplateDetailPage() {
     }
 
     try {
-      const { error } = await supabase.from('ideas').insert({
+      const ideaData: any = {
         title: template?.title || 'Template',
         description: template?.description || '',
         content: generatedContent,
@@ -83,12 +90,24 @@ export default function TemplateDetailPage() {
         tags: [],
         is_favorite: false,
         user_id: user.id,
-      });
+      };
+
+      // Se vier de um time, salvar com team_id
+      if (teamId) {
+        ideaData.team_id = teamId;
+      }
+
+      const { error } = await supabase.from('ideas').insert(ideaData);
 
       if (error) throw error;
 
-      toast.success('Salvo como ideia!');
-      router.push('/dashboard');
+      if (teamId) {
+        toast.success('Ideia salva no time!');
+        router.push(`/teams/${teamId}?tab=ideas`);
+      } else {
+        toast.success('Salvo como ideia!');
+        router.push('/dashboard');
+      }
     } catch (error) {
       toast.error('Erro ao salvar');
     }
@@ -202,7 +221,7 @@ export default function TemplateDetailPage() {
         <div className="grid gap-6 lg:grid-cols-1">
           {/* Tab: Resumo */}
           {activeTab === 'resume' && (
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-lg border bg-card p-6 transition hover:-translate-y-2 hover:scale-[1.02] hover:shadow-lg">
               <div className="mb-6 flex items-start gap-4">
                 <div className="rounded-lg bg-purple-500/10 p-3">
                   <Sparkles className="h-6 w-6 text-purple-500" />
@@ -270,7 +289,7 @@ export default function TemplateDetailPage() {
 
           {/* Tab: Personalizar */}
           {activeTab === 'personalize' && (
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-lg border bg-card p-6 transition hover:-translate-y-2 hover:scale-[1.02] hover:shadow-lg">
               <div className="mb-6 flex items-start gap-4">
                 <div className="rounded-lg bg-orange-500/10 p-3">
                   <Zap className="h-6 w-6 text-orange-500" />
@@ -328,7 +347,7 @@ export default function TemplateDetailPage() {
 
           {/* Tab: Conteúdo */}
           {activeTab === 'content' && (
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-lg border bg-card p-6 transition hover:-translate-y-2 hover:scale-[1.02] hover:shadow-lg">
               <div className="mb-6 flex items-start gap-4">
                 <div className="rounded-lg bg-green-500/10 p-3">
                   <Save className="h-6 w-6 text-green-500" />

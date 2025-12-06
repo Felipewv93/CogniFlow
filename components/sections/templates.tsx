@@ -38,21 +38,21 @@ export function Templates() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3 mb-8">
+        <div className="mb-8 grid gap-6 md:grid-cols-3">
           {templateExamples.map((template) => (
-            <Card key={template.title} className="hover:shadow-lg transition-shadow">
+            <Card
+              key={template.title}
+              className="transition hover:border-cyber-cyan/50 hover:shadow-lg"
+            >
               <CardHeader>
-                <Badge className="w-fit mb-2">{template.category}</Badge>
+                <Badge className="mb-2 w-fit">{template.category}</Badge>
                 <CardTitle className="text-xl">{template.title}</CardTitle>
                 <CardDescription>{template.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {template.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs bg-secondary px-2 py-1 rounded-full"
-                    >
+                    <span key={tag} className="rounded-full bg-secondary px-2 py-1 text-xs">
                       {tag}
                     </span>
                   ))}

@@ -43,10 +43,17 @@ export default function TemplatesPage() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [teamId, setTeamId] = useState<string | null>(null);
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
+    // Capturar teamId da URL
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      setTeamId(urlParams.get('team'));
+    }
+
     if (!authLoading) {
       loadTemplates();
     }
@@ -104,7 +111,11 @@ export default function TemplatesPage() {
       router.push('/auth/login');
       return;
     }
-    router.push(`/templates/${template.id}`);
+
+    // Se vier de um time, passar o parâmetro team
+    const url = teamId ? `/templates/${template.id}?team=${teamId}` : `/templates/${template.id}`;
+
+    router.push(url);
   };
 
   return (
