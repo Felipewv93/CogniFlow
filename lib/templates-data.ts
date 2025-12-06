@@ -961,4 +961,773 @@ export const TEMPLATES_DATA: TemplateData[] = [
     is_public: true,
     created_at: new Date().toISOString(),
   },
+  {
+    id: '13',
+    title: 'Pesquisa com Usuários',
+    description: 'Roteiro para conduzir entrevistas e pesquisas com usuários',
+    category: 'design',
+    tags: ['ux-research', 'entrevistas', 'usuários'],
+    objective: 'Conduzir pesquisa qualitativa com usuários',
+    target_audience: 'UX Researchers e Designers',
+    fields: [
+      {
+        id: 'objetivo_pesquisa',
+        label: 'Objetivo da Pesquisa',
+        placeholder: 'O que você quer descobrir?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'perfil_participantes',
+        label: 'Perfil dos Participantes',
+        placeholder: 'Quem você vai entrevistar?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'perguntas_abertura',
+        label: 'Perguntas de Abertura',
+        placeholder: 'Como você vai começar?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'perguntas_principais',
+        label: 'Perguntas Principais',
+        placeholder: 'Perguntas centrais da pesquisa',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'perguntas_fechamento',
+        label: 'Perguntas de Fechamento',
+        placeholder: 'Como você vai concluir?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'quantidade_entrevistas',
+        label: 'Quantidade de Entrevistas',
+        placeholder: 'Quantas pessoas você vai entrevistar?',
+        type: 'text',
+        required: true,
+      },
+    ],
+    content_template: `# Roteiro de Pesquisa com Usuários
+
+## 🎯 Objetivo
+{{objetivo_pesquisa}}
+
+## 👥 Perfil dos Participantes
+{{perfil_participantes}}
+
+## 🚀 Abertura
+{{perguntas_abertura}}
+
+## 💬 Perguntas Principais
+{{perguntas_principais}}
+
+## 🎬 Fechamento
+{{perguntas_fechamento}}
+
+## 📊 Meta
+{{quantidade_entrevistas}} entrevistas`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '14',
+    title: 'OKRs Trimestrais',
+    description: 'Framework para definir Objectives and Key Results',
+    category: 'business',
+    tags: ['okr', 'metas', 'produtividade'],
+    objective: 'Definir OKRs do trimestre',
+    target_audience: 'Gestores e times',
+    fields: [
+      {
+        id: 'trimestre',
+        label: 'Trimestre',
+        placeholder: 'Q1 2025, Q2 2025...',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'objetivo_1',
+        label: 'Objetivo 1',
+        placeholder: 'O que você quer alcançar?',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'kr1_obj1',
+        label: 'Key Result 1.1',
+        placeholder: 'Como você vai medir?',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'kr2_obj1',
+        label: 'Key Result 1.2',
+        placeholder: 'Métrica adicional',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'objetivo_2',
+        label: 'Objetivo 2',
+        placeholder: 'Segundo objetivo principal',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'kr1_obj2',
+        label: 'Key Result 2.1',
+        placeholder: 'Como você vai medir?',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'kr2_obj2',
+        label: 'Key Result 2.2',
+        placeholder: 'Métrica adicional',
+        type: 'text',
+        required: true,
+      },
+    ],
+    content_template: `# OKRs - {{trimestre}}
+
+## 🎯 Objetivo 1: {{objetivo_1}}
+- **KR 1.1:** {{kr1_obj1}}
+- **KR 1.2:** {{kr2_obj1}}
+
+## 🎯 Objetivo 2: {{objetivo_2}}
+- **KR 2.1:** {{kr1_obj2}}
+- **KR 2.2:** {{kr2_obj2}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '15',
+    title: 'One-Page Website',
+    description: 'Estrutura de conteúdo para landing page de uma página',
+    category: 'marketing',
+    tags: ['landing-page', 'website', 'conversão'],
+    objective: 'Criar estrutura de landing page',
+    target_audience: 'Designers e marqueteiros',
+    fields: [
+      {
+        id: 'headline',
+        label: 'Headline Principal',
+        placeholder: 'Título que captura atenção',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'subheadline',
+        label: 'Subheadline',
+        placeholder: 'Explicação do benefício',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'beneficio_1',
+        label: 'Benefício 1',
+        placeholder: 'Primeiro benefício principal',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'beneficio_2',
+        label: 'Benefício 2',
+        placeholder: 'Segundo benefício principal',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'beneficio_3',
+        label: 'Benefício 3',
+        placeholder: 'Terceiro benefício principal',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'social_proof_landing',
+        label: 'Prova Social',
+        placeholder: 'Depoimentos, números, logos...',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'cta_principal',
+        label: 'CTA Principal',
+        placeholder: 'Texto do botão',
+        type: 'text',
+        required: true,
+      },
+    ],
+    content_template: `# Landing Page Structure
+
+## 🎯 Hero Section
+**Headline:** {{headline}}
+**Subheadline:** {{subheadline}}
+**CTA:** {{cta_principal}}
+
+## ✨ Benefícios
+1. {{beneficio_1}}
+2. {{beneficio_2}}
+3. {{beneficio_3}}
+
+## 💬 Prova Social
+{{social_proof_landing}}
+
+## 🚀 CTA Final
+{{cta_principal}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '16',
+    title: 'Roadmap de Produto',
+    description: 'Planejamento de features e releases para os próximos meses',
+    category: 'feature',
+    tags: ['roadmap', 'planejamento', 'produto'],
+    objective: 'Criar roadmap de produto',
+    target_audience: 'Product Managers',
+    fields: [
+      {
+        id: 'produto_roadmap',
+        label: 'Nome do Produto',
+        placeholder: 'Produto sendo planejado',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'visao_roadmap',
+        label: 'Visão de Longo Prazo',
+        placeholder: 'Onde queremos chegar?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'mes1',
+        label: 'Mês 1 - Features',
+        placeholder: 'O que será desenvolvido no primeiro mês?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'mes2',
+        label: 'Mês 2 - Features',
+        placeholder: 'O que será desenvolvido no segundo mês?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'mes3',
+        label: 'Mês 3 - Features',
+        placeholder: 'O que será desenvolvido no terceiro mês?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'icebox',
+        label: 'Icebox (Futuro)',
+        placeholder: 'Ideias para o futuro',
+        type: 'textarea',
+        required: false,
+      },
+    ],
+    content_template: `# Roadmap: {{produto_roadmap}}
+
+## 🌟 Visão
+{{visao_roadmap}}
+
+## 📅 Mês 1
+{{mes1}}
+
+## 📅 Mês 2
+{{mes2}}
+
+## 📅 Mês 3
+{{mes3}}
+
+## 🧊 Icebox
+{{icebox}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '17',
+    title: 'Calendário Editorial',
+    description: 'Planejamento mensal de conteúdo para redes sociais e blog',
+    category: 'content',
+    tags: ['editorial', 'conteúdo', 'redes-sociais'],
+    objective: 'Organizar publicações de conteúdo',
+    target_audience: 'Social media managers',
+    fields: [
+      {
+        id: 'mes_editorial',
+        label: 'Mês de Referência',
+        placeholder: 'Janeiro 2025, Fevereiro 2025...',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'tema_mensal',
+        label: 'Tema do Mês',
+        placeholder: 'Qual o foco principal?',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'segunda',
+        label: 'Segundas-feiras',
+        placeholder: 'Tipo de conteúdo',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'quarta',
+        label: 'Quartas-feiras',
+        placeholder: 'Tipo de conteúdo',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'sexta',
+        label: 'Sextas-feiras',
+        placeholder: 'Tipo de conteúdo',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'formatos_editorial',
+        label: 'Formatos Variados',
+        placeholder: 'Carrossel, Reels, Stories...',
+        type: 'textarea',
+        required: true,
+      },
+    ],
+    content_template: `# Calendário Editorial - {{mes_editorial}}
+
+## 🎯 Tema do Mês
+{{tema_mensal}}
+
+## 📅 Frequência Semanal
+- **Segundas:** {{segunda}}
+- **Quartas:** {{quarta}}
+- **Sextas:** {{sexta}}
+
+## 🎨 Formatos
+{{formatos_editorial}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '18',
+    title: 'Modelo de Negócio Canvas',
+    description: 'Business Model Canvas completo em formato simplificado',
+    category: 'startup',
+    tags: ['bmc', 'modelo-negócio', 'canvas'],
+    objective: 'Mapear modelo de negócio',
+    target_audience: 'Empreendedores e consultores',
+    fields: [
+      {
+        id: 'parceiros_chave',
+        label: 'Parceiros-Chave',
+        placeholder: 'Quem são seus parceiros estratégicos?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'atividades_chave',
+        label: 'Atividades-Chave',
+        placeholder: 'O que você precisa fazer?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'recursos_chave',
+        label: 'Recursos-Chave',
+        placeholder: 'O que você precisa ter?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'proposta_valor_canvas',
+        label: 'Proposta de Valor',
+        placeholder: 'Qual valor você entrega?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'relacionamento_clientes',
+        label: 'Relacionamento com Clientes',
+        placeholder: 'Como você se relaciona?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'canais_canvas',
+        label: 'Canais',
+        placeholder: 'Como você entrega valor?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'segmentos_clientes',
+        label: 'Segmentos de Clientes',
+        placeholder: 'Para quem você cria valor?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'estrutura_custos',
+        label: 'Estrutura de Custos',
+        placeholder: 'Quais são seus custos?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'fontes_receita_canvas',
+        label: 'Fontes de Receita',
+        placeholder: 'Como você ganha dinheiro?',
+        type: 'textarea',
+        required: true,
+      },
+    ],
+    content_template: `# Business Model Canvas
+
+## 👥 Parceiros-Chave
+{{parceiros_chave}}
+
+## 🎯 Atividades-Chave
+{{atividades_chave}}
+
+## 💎 Recursos-Chave
+{{recursos_chave}}
+
+## ✨ Proposta de Valor
+{{proposta_valor_canvas}}
+
+## 🤝 Relacionamento
+{{relacionamento_clientes}}
+
+## 📢 Canais
+{{canais_canvas}}
+
+## 👤 Segmentos
+{{segmentos_clientes}}
+
+## 💸 Custos
+{{estrutura_custos}}
+
+## 💰 Receitas
+{{fontes_receita_canvas}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '19',
+    title: 'Wireframe de Interface',
+    description: 'Estrutura de conteúdo e layout para telas de app/web',
+    category: 'design',
+    tags: ['wireframe', 'ui', 'prototipo'],
+    objective: 'Planejar estrutura de interface',
+    target_audience: 'UI/UX Designers',
+    fields: [
+      {
+        id: 'nome_tela',
+        label: 'Nome da Tela',
+        placeholder: 'Home, Dashboard, Login...',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'objetivo_tela',
+        label: 'Objetivo da Tela',
+        placeholder: 'O que o usuário deve fazer aqui?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'elementos_topo',
+        label: 'Elementos do Topo',
+        placeholder: 'Header, navbar, título...',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'conteudo_principal',
+        label: 'Conteúdo Principal',
+        placeholder: 'Seções, cards, listas...',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'ctas_acoes',
+        label: 'CTAs e Ações',
+        placeholder: 'Botões, links...',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'navegacao',
+        label: 'Navegação',
+        placeholder: 'Como o usuário sai dessa tela?',
+        type: 'textarea',
+        required: true,
+      },
+    ],
+    content_template: `# Wireframe: {{nome_tela}}
+
+## 🎯 Objetivo
+{{objetivo_tela}}
+
+## ⬆️ Topo
+{{elementos_topo}}
+
+## 📱 Conteúdo Principal
+{{conteudo_principal}}
+
+## 🔘 CTAs e Ações
+{{ctas_acoes}}
+
+## 🧭 Navegação
+{{navegacao}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '20',
+    title: 'E-mail Marketing',
+    description: 'Template para estruturar campanhas de e-mail marketing',
+    category: 'marketing',
+    tags: ['email', 'newsletter', 'conversão'],
+    objective: 'Criar campanha de e-mail',
+    target_audience: 'E-mail marketers',
+    fields: [
+      {
+        id: 'assunto_email',
+        label: 'Assunto do E-mail',
+        placeholder: 'Linha de assunto chamativa',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'pre_header',
+        label: 'Pré-Header',
+        placeholder: 'Texto de preview',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'abertura_email',
+        label: 'Abertura',
+        placeholder: 'Como você vai começar?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'corpo_email',
+        label: 'Corpo do E-mail',
+        placeholder: 'Mensagem principal',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'cta_email',
+        label: 'Call to Action',
+        placeholder: 'Texto do botão/link',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'fechamento_email',
+        label: 'Fechamento',
+        placeholder: 'Como você vai encerrar?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'ps_email',
+        label: 'P.S. (Opcional)',
+        placeholder: 'Mensagem extra no final',
+        type: 'text',
+        required: false,
+      },
+    ],
+    content_template: `# E-mail Marketing
+
+**Assunto:** {{assunto_email}}
+**Pré-Header:** {{pre_header}}
+
+---
+
+{{abertura_email}}
+
+{{corpo_email}}
+
+**[{{cta_email}}]**
+
+{{fechamento_email}}
+
+{{ps_email}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '21',
+    title: 'Sprint Planning',
+    description: 'Planejamento de sprint ágil com user stories e estimativas',
+    category: 'feature',
+    tags: ['agile', 'scrum', 'sprint'],
+    objective: 'Planejar sprint de desenvolvimento',
+    target_audience: 'Scrum Masters e desenvolvedores',
+    fields: [
+      {
+        id: 'numero_sprint',
+        label: 'Sprint',
+        placeholder: 'Sprint #10, Sprint 23...',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'objetivo_sprint',
+        label: 'Objetivo da Sprint',
+        placeholder: 'O que queremos alcançar?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'story_1',
+        label: 'User Story 1',
+        placeholder: 'Como [usuário], quero [ação] para [benefício]',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'story_2',
+        label: 'User Story 2',
+        placeholder: 'Segunda história prioritária',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'story_3',
+        label: 'User Story 3',
+        placeholder: 'Terceira história prioritária',
+        type: 'textarea',
+        required: false,
+      },
+      {
+        id: 'capacidade_time',
+        label: 'Capacidade do Time',
+        placeholder: 'Story points ou horas disponíveis',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'impedimentos',
+        label: 'Impedimentos Conhecidos',
+        placeholder: 'O que pode atrapalhar?',
+        type: 'textarea',
+        required: false,
+      },
+    ],
+    content_template: `# {{numero_sprint}}
+
+## 🎯 Objetivo
+{{objetivo_sprint}}
+
+## 📋 User Stories
+
+### Story 1
+{{story_1}}
+
+### Story 2
+{{story_2}}
+
+### Story 3
+{{story_3}}
+
+## ⚡ Capacidade
+{{capacidade_time}}
+
+## ⚠️ Impedimentos
+{{impedimentos}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: '22',
+    title: 'Análise SWOT',
+    description: 'Análise de Forças, Fraquezas, Oportunidades e Ameaças',
+    category: 'business',
+    tags: ['swot', 'análise', 'estratégia'],
+    objective: 'Analisar situação estratégica',
+    target_audience: 'Gestores e estrategistas',
+    fields: [
+      {
+        id: 'empresa_swot',
+        label: 'Empresa/Projeto',
+        placeholder: 'O que está sendo analisado?',
+        type: 'text',
+        required: true,
+      },
+      {
+        id: 'forcas',
+        label: 'Forças (Strengths)',
+        placeholder: 'O que você faz bem?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'fraquezas',
+        label: 'Fraquezas (Weaknesses)',
+        placeholder: 'Onde você precisa melhorar?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'oportunidades',
+        label: 'Oportunidades (Opportunities)',
+        placeholder: 'Que oportunidades existem no mercado?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'ameacas',
+        label: 'Ameaças (Threats)',
+        placeholder: 'Quais são os riscos externos?',
+        type: 'textarea',
+        required: true,
+      },
+      {
+        id: 'acoes_estrategicas',
+        label: 'Ações Estratégicas',
+        placeholder: 'O que você vai fazer com essa análise?',
+        type: 'textarea',
+        required: true,
+      },
+    ],
+    content_template: `# Análise SWOT: {{empresa_swot}}
+
+## 💪 Forças
+{{forcas}}
+
+## 🔻 Fraquezas
+{{fraquezas}}
+
+## 🌟 Oportunidades
+{{oportunidades}}
+
+## ⚠️ Ameaças
+{{ameacas}}
+
+## 🎯 Ações Estratégicas
+{{acoes_estrategicas}}`,
+    is_public: true,
+    created_at: new Date().toISOString(),
+  },
 ];

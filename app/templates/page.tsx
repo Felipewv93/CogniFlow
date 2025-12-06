@@ -70,7 +70,6 @@ export default function TemplatesPage() {
       }));
 
       setTemplates(allTemplates);
-      toast.success('Templates carregados');
     } catch (error: any) {
       toast.error('Erro ao carregar templates');
       setTemplates([]);
@@ -190,7 +189,7 @@ export default function TemplatesPage() {
                         {categoryTemplates.map((template) => (
                           <div
                             key={template.id}
-                            className="group rounded-lg border bg-card p-6 transition-all hover:border-transparent hover:shadow-lg"
+                            className="group rounded-lg border bg-card p-6 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
                           >
                             <div className="mb-3">
                               <span
@@ -237,7 +236,7 @@ export default function TemplatesPage() {
                   {filteredTemplates.map((template) => (
                     <div
                       key={template.id}
-                      className="rounded-lg border bg-card p-6 transition-all hover:border-transparent hover:shadow-lg"
+                      className="rounded-lg border bg-card p-6 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.02] hover:shadow-xl"
                     >
                       <div className="mb-3">
                         <span
