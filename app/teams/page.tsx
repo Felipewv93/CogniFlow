@@ -47,69 +47,24 @@ export default function TeamsPage() {
     try {
       setLoading(true);
 
-      // Buscar times onde o usuário é dono
-      const { data: ownedTeams, error: ownedError } = await supabase
-        .from('teams')
-        .select('*')
-        .eq('owner_id', user!.id);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      if (ownedError) {
-        console.error('Erro ao buscar times próprios:', ownedError);
-        throw ownedError;
+      const response = await fetch('/api/teams', {
+        method: 'GET',
+        headers: {
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao carregar times');
       }
 
-      // Buscar times onde o usuário é membro
-      const { data: memberTeams, error: memberError } = await supabase
-        .from('team_members')
-        .select('team_id')
-        .eq('user_id', user!.id);
-
-      if (memberError) {
-        console.error('Erro ao buscar membros:', memberError);
-        // Não falhar se não conseguir buscar membros
-      }
-
-      const memberTeamIds = memberTeams?.map((m) => m.team_id) || [];
-      let allTeams = [...(ownedTeams || [])];
-
-      if (memberTeamIds.length > 0) {
-        const { data: teams, error: teamsError } = await supabase
-          .from('teams')
-          .select('*')
-          .in('id', memberTeamIds);
-
-        if (teamsError) {
-          console.error('Erro ao buscar times de membro:', teamsError);
-        } else {
-          allTeams = [...allTeams, ...(teams || [])];
-        }
-      }
-
-      // Buscar estatísticas para cada time
-      const teamsWithStats = await Promise.all(
-        allTeams.map(async (team) => {
-          // Contar membros
-          const { count: memberCount } = await supabase
-            .from('team_members')
-            .select('*', { count: 'exact', head: true })
-            .eq('team_id', team.id);
-
-          // Contar ideias do time
-          const { count: ideaCount } = await supabase
-            .from('ideas')
-            .select('*', { count: 'exact', head: true })
-            .eq('team_id', team.id);
-
-          return {
-            ...team,
-            member_count: (memberCount || 0) + 1, // +1 para o owner
-            idea_count: ideaCount || 0,
-            template_count: 0, // Placeholder
-          };
-        })
-      );
-
-      setTeams(teamsWithStats);
+      setTeams(result.teams || []);
     } catch (error: any) {
       console.error('Erro ao carregar times:', error);
       console.error('Detalhes:', error.message, error.code);
@@ -129,26 +84,28 @@ export default function TeamsPage() {
     }
 
     try {
-      console.log('Criando time...', { name: newTeam.name, owner_id: user!.id });
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      // Criar o time
-      const { data: team, error: teamError } = await supabase
-        .from('teams')
-        .insert({
+      const response = await fetch('/api/teams', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({
           name: newTeam.name,
           description: newTeam.description,
           website: newTeam.website,
-          owner_id: user!.id,
-        })
-        .select()
-        .single();
+        }),
+      });
 
-      if (teamError) {
-        console.error('Erro ao criar time:', teamError);
-        throw teamError;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao criar time');
       }
-
-      console.log('Time criado:', team);
 
       toast.success('Time criado com sucesso!');
       setShowCreateModal(false);

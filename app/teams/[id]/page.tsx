@@ -89,6 +89,7 @@ export default function TeamDetailPage() {
 
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [isInviting, setIsInviting] = useState(false);
 
   const [editMode, setEditMode] = useState(false);
   const [editedTeam, setEditedTeam] = useState({
@@ -118,85 +119,39 @@ export default function TeamDetailPage() {
     try {
       setLoading(true);
 
-      // Buscar dados do time
-      const { data: teamData, error: teamError } = await supabase
-        .from('teams')
-        .select('*')
-        .eq('id', teamId)
-        .single();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      if (teamError) throw teamError;
+      const response = await fetch(`/api/teams/${teamId}`, {
+        method: 'GET',
+        headers: {
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao carregar dados do time');
+      }
+
+      const teamData = result.team;
 
       setTeam(teamData);
-      setIsOwner(teamData.owner_id === user!.id);
+      setIsOwner(Boolean(result.isOwner));
       setEditedTeam({
         name: teamData.name,
         description: teamData.description || '',
         website: teamData.website || '',
       });
 
-      // Buscar dados do owner
-      const { data: ownerData } = await supabase
-        .from('profiles')
-        .select('email, full_name')
-        .eq('id', teamData.owner_id)
-        .single();
-
-      if (ownerData) {
-        setOwnerEmail(ownerData.email || '');
-        setOwnerName(ownerData.full_name || ownerData.email?.split('@')[0] || 'Proprietário');
-      } else {
-        // Fallback: buscar do auth.users
-        setOwnerEmail(user!.email || '');
-        setOwnerName(user!.email?.split('@')[0] || 'Proprietário');
-      }
-
-      // Buscar membros
-      const { data: membersData, error: membersError } = await supabase
-        .from('team_members')
-        .select('*')
-        .eq('team_id', teamId);
-
-      if (membersError) throw membersError;
-
-      // Buscar emails dos membros
-      const memberIds = membersData?.map((m) => m.user_id) || [];
-      if (memberIds.length > 0) {
-        const { data: usersData } = await supabase
-          .from('profiles')
-          .select('id, email, full_name')
-          .in('id', memberIds);
-
-        const membersWithEmails = membersData?.map((member) => ({
-          ...member,
-          email: usersData?.find((u) => u.id === member.user_id)?.email || '',
-          name: usersData?.find((u) => u.id === member.user_id)?.full_name || '',
-        }));
-
-        setMembers(membersWithEmails || []);
-      }
-
-      // Buscar ideias do time
-      const { data: ideasData, error: ideasError } = await supabase
-        .from('ideas')
-        .select('*')
-        .eq('team_id', teamId)
-        .order('created_at', { ascending: false });
-
-      if (ideasError) throw ideasError;
-      setIdeas(ideasData || []);
-
-      // Buscar convites pendentes (se for owner)
-      if (teamData.owner_id === user!.id) {
-        const { data: invitesData, error: invitesError } = await supabase
-          .from('team_invites')
-          .select('*')
-          .eq('team_id', teamId)
-          .eq('status', 'pending');
-
-        if (invitesError) throw invitesError;
-        setInvites(invitesData || []);
-      }
+      setOwnerEmail(result.owner?.email || '');
+      setOwnerName(result.owner?.name || 'Proprietário');
+      setMembers(result.members || []);
+      setIdeas(result.ideas || []);
+      setUserIdeas(result.userIdeas || []);
+      setInvites(result.invites || []);
     } catch (error: any) {
       console.error('Erro ao carregar dados do time:', error);
       toast.error('Erro ao carregar dados do time');
@@ -207,6 +162,20 @@ export default function TeamDetailPage() {
     }
   }
 
+  async function getAuthHeaders() {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    const headers = new Headers();
+
+    if (session?.access_token) {
+      headers.set('Authorization', `Bearer ${session.access_token}`);
+    }
+
+    return headers;
+  }
+
   async function handleInviteMember(e: React.FormEvent) {
     e.preventDefault();
 
@@ -215,27 +184,35 @@ export default function TeamDetailPage() {
       return;
     }
 
+    if (!teamId) {
+      toast.error('Time inválido');
+      return;
+    }
+
     try {
-      // Verificar se o usuário já é membro
-      const { data: existingMember } = await supabase
-        .from('team_members')
-        .select('*')
-        .eq('team_id', teamId)
-        .eq('user_id', inviteEmail);
+      setIsInviting(true);
 
-      if (existingMember && existingMember.length > 0) {
-        toast.error('Este usuário já é membro do time');
-        return;
-      }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-      // Criar convite
-      const { error } = await supabase.from('team_invites').insert({
-        team_id: teamId,
-        email: inviteEmail,
-        invited_by: user!.id,
+      const response = await fetch('/api/teams/invite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({
+          teamId,
+          email: inviteEmail,
+        }),
       });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao enviar convite');
+      }
 
       toast.success(`Convite enviado para ${inviteEmail}`);
       setShowInviteModal(false);
@@ -243,7 +220,9 @@ export default function TeamDetailPage() {
       loadTeamData();
     } catch (error: any) {
       console.error('Erro ao enviar convite:', error);
-      toast.error('Erro ao enviar convite');
+      toast.error(error?.message || 'Erro ao enviar convite');
+    } finally {
+      setIsInviting(false);
     }
   }
 
@@ -251,15 +230,45 @@ export default function TeamDetailPage() {
     if (!confirm('Remover este membro do time?')) return;
 
     try {
-      const { error } = await supabase.from('team_members').delete().eq('id', memberId);
+      const response = await fetch(`/api/teams/${teamId}/members/${memberId}`, {
+        method: 'DELETE',
+        headers: await getAuthHeaders(),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao remover membro');
+      }
 
       toast.success('Membro removido');
       loadTeamData();
     } catch (error: any) {
       console.error('Erro ao remover membro:', error);
       toast.error('Erro ao remover membro');
+    }
+  }
+
+  async function handleDeleteInvite(inviteId: string, inviteEmail: string) {
+    if (!confirm(`Deletar convite para ${inviteEmail}?`)) return;
+
+    try {
+      const response = await fetch(`/api/teams/${teamId}/invites/${inviteId}`, {
+        method: 'DELETE',
+        headers: await getAuthHeaders(),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao deletar convite');
+      }
+
+      toast.success('Convite deletado');
+      loadTeamData();
+    } catch (error: any) {
+      console.error('Erro ao deletar convite:', error);
+      toast.error('Erro ao deletar convite');
     }
   }
 
@@ -270,23 +279,27 @@ export default function TeamDetailPage() {
     }
 
     try {
-      const { error } = await supabase
-        .from('teams')
-        .update({
+      const response = await fetch(`/api/teams/${teamId}`, {
+        method: 'PUT',
+        headers: await (async () => {
+          const headers = await getAuthHeaders();
+          headers.set('Content-Type', 'application/json');
+          return headers;
+        })(),
+        body: JSON.stringify({
           name: editedTeam.name,
           description: editedTeam.description,
           website: editedTeam.website,
-        })
-        .eq('id', teamId);
-
-      if (error) throw error;
-
-      setTeam({
-        ...team,
-        name: editedTeam.name,
-        description: editedTeam.description,
-        website: editedTeam.website,
+        }),
       });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao atualizar time');
+      }
+
+      setTeam(result.team);
 
       setEditMode(false);
       toast.success('Time atualizado com sucesso!');
@@ -305,9 +318,16 @@ export default function TeamDetailPage() {
     }
 
     try {
-      const { error } = await supabase.from('teams').delete().eq('id', teamId);
+      const response = await fetch(`/api/teams/${teamId}`, {
+        method: 'DELETE',
+        headers: await getAuthHeaders(),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao deletar time');
+      }
 
       toast.success('Time deletado com sucesso');
       router.push('/teams');
@@ -317,33 +337,27 @@ export default function TeamDetailPage() {
     }
   }
 
-  async function loadUserIdeas() {
-    try {
-      const { data, error } = await supabase
-        .from('ideas')
-        .select('*')
-        .eq('user_id', user!.id)
-        .is('team_id', null)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setUserIdeas(data || []);
-    } catch (error: any) {
-      console.error('Erro ao carregar ideias:', error);
-      toast.error('Erro ao carregar suas ideias');
-    }
-  }
-
   async function handleShareIdea(ideaId: string) {
     try {
-      const { error } = await supabase.from('ideas').update({ team_id: teamId }).eq('id', ideaId);
+      const response = await fetch(`/api/teams/${teamId}/ideas/${ideaId}`, {
+        method: 'PATCH',
+        headers: await (async () => {
+          const headers = await getAuthHeaders();
+          headers.set('Content-Type', 'application/json');
+          return headers;
+        })(),
+        body: JSON.stringify({ action: 'share' }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao compartilhar ideia');
+      }
 
       toast.success('Ideia compartilhada com o time!');
       setShowShareIdeaModal(false);
       loadTeamData();
-      loadUserIdeas();
     } catch (error: any) {
       console.error('Erro ao compartilhar ideia:', error);
       toast.error('Erro ao compartilhar ideia');
@@ -352,9 +366,21 @@ export default function TeamDetailPage() {
 
   async function handleUnshareIdea(ideaId: string) {
     try {
-      const { error } = await supabase.from('ideas').update({ team_id: null }).eq('id', ideaId);
+      const response = await fetch(`/api/teams/${teamId}/ideas/${ideaId}`, {
+        method: 'PATCH',
+        headers: await (async () => {
+          const headers = await getAuthHeaders();
+          headers.set('Content-Type', 'application/json');
+          return headers;
+        })(),
+        body: JSON.stringify({ action: 'unshare' }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao remover ideia');
+      }
 
       toast.success('Ideia removida do time');
       loadTeamData();
@@ -368,12 +394,21 @@ export default function TeamDetailPage() {
     if (!selectedIdea) return;
 
     try {
-      const { error } = await supabase
-        .from('ideas')
-        .update(editedIdeaData)
-        .eq('id', selectedIdea.id);
+      const response = await fetch(`/api/teams/${teamId}/ideas/${selectedIdea.id}`, {
+        method: 'PUT',
+        headers: await (async () => {
+          const headers = await getAuthHeaders();
+          headers.set('Content-Type', 'application/json');
+          return headers;
+        })(),
+        body: JSON.stringify(editedIdeaData),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Erro ao atualizar ideia');
+      }
 
       toast.success('Ideia atualizada com sucesso!');
       setEditingIdea(false);
@@ -381,7 +416,7 @@ export default function TeamDetailPage() {
       loadTeamData();
 
       // Atualizar a ideia selecionada
-      const updatedIdea = { ...selectedIdea, ...editedIdeaData };
+      const updatedIdea = result.idea || { ...selectedIdea, ...editedIdeaData };
       setSelectedIdea(updatedIdea as TeamIdea);
     } catch (error: any) {
       console.error('Erro ao atualizar ideia:', error);
@@ -862,8 +897,8 @@ export default function TeamDetailPage() {
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold">Ideias do Time</h2>
               <button
-                onClick={() => {
-                  loadUserIdeas();
+                onClick={async () => {
+                  await loadTeamData();
                   setShowShareIdeaModal(true);
                 }}
                 className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-2 text-white transition hover:opacity-90"
@@ -878,8 +913,8 @@ export default function TeamDetailPage() {
                 <Lightbulb className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
                 <p className="mb-4 text-muted-foreground">Nenhuma ideia compartilhada ainda</p>
                 <button
-                  onClick={() => {
-                    loadUserIdeas();
+                  onClick={async () => {
+                    await loadTeamData();
                     setShowShareIdeaModal(true);
                   }}
                   className="rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 text-white transition hover:opacity-90"
@@ -1008,9 +1043,18 @@ export default function TeamDetailPage() {
                           </p>
                         </div>
                       </div>
-                      <span className="rounded bg-amber-500/10 px-3 py-1 text-sm text-amber-600">
-                        Pendente
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded bg-amber-500/10 px-3 py-1 text-sm text-amber-600">
+                          Pendente
+                        </span>
+                        <button
+                          onClick={() => handleDeleteInvite(invite.id, invite.email)}
+                          className="rounded-lg p-2 text-red-500 transition hover:bg-muted"
+                          title="Deletar convite"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -1205,9 +1249,10 @@ export default function TeamDetailPage() {
                 </button>
                 <button
                   type="submit"
+                  disabled={isInviting}
                   className="flex-1 rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 px-4 py-2 text-white transition hover:opacity-90"
                 >
-                  Enviar Convite
+                  {isInviting ? 'Enviando...' : 'Enviar Convite'}
                 </button>
               </div>
             </form>
