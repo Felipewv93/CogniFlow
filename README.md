@@ -1,8 +1,8 @@
-# Cogniflow 🧠✨
+# Cogniflow
 
-**Plataforma SaaS de Inteligência Criativa**
+Plataforma SaaS de inteligência criativa para transformar ideias em entregáveis práticos com apoio de IA.
 
-Desbloqueie, estruture e conecte suas ideias em prompts e templates para ferramentas como Lovable, Base44, Notion, Figma e muito mais.
+O Cogniflow foi projetado para equipes e profissionais que precisam estruturar conceitos rapidamente e converter brainstorm em prompts, templates e ativos reutilizáveis para ferramentas como Lovable, Base44, Notion e Figma.
 
 <div align="center">
 
@@ -15,20 +15,20 @@ Desbloqueie, estruture e conecte suas ideias em prompts e templates para ferrame
 
 ---
 
-## 🚀 Features
+## Principais Funcionalidades
 
-- ✅ **Gerador de Ideias** - Navegue ou gere automaticamente ideias e prompts criativos
-- 📚 **Biblioteca de Templates** - Templates prontos para startups, design, apps e conteúdo
-- 🔄 **Sistema de Exportação** - Exporte ideias para ferramentas externas
-- 📊 **Dashboard do Usuário** - Gerencie ideias salvas e histórico
-- 🤖 **Assistente de IA** - Interface tipo chat para refinar suas ideias
-- 🔐 **Autenticação Segura** - Email + OAuth (Google/GitHub) via Supabase
-- 🌓 **Dark Mode** - Tema claro/escuro com estética cyber/IA
-- ⚡ **Performance Otimizada** - Lighthouse ≥95 em Performance, SEO e Acessibilidade
+- **Gerador de ideias**: criação e refinamento de ideias e prompts com suporte de IA.
+- **Biblioteca de templates**: coleção de estruturas prontas para produto, design, apps e conteúdo.
+- **Exportação de conteúdo**: envio de ideias e artefatos para ferramentas externas.
+- **Painel do usuário**: histórico, organização e gestão de ideias salvas.
+- **Assistente conversacional**: fluxo em formato de chat para evolução de conceitos.
+- **Autenticação segura**: login por email e OAuth (Google/GitHub) via Supabase.
+- **Interface responsiva**: experiência consistente em desktop e mobile.
+- **Base otimizada para SEO e performance**: arquitetura com foco em escalabilidade.
 
 ---
 
-## 🛠️ Tech Stack
+## Stack Tecnológica
 
 - **Framework:** Next.js 14 (App Router)
 - **Linguagem:** TypeScript (strict mode)
@@ -43,7 +43,7 @@ Desbloqueie, estruture e conecte suas ideias em prompts e templates para ferrame
 
 ---
 
-## 📦 Instalação Rápida
+## Instalação Rápida
 
 ```bash
 # 1. Instalar dependências
@@ -57,11 +57,11 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-**🔗 Para instruções detalhadas, veja [INSTALL.md](./INSTALL.md)**
+Para instruções detalhadas, consulte [INSTALL.md](./INSTALL.md).
 
 ---
 
-## 🏗️ Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 CogniFlow/
@@ -81,13 +81,13 @@ CogniFlow/
 └── public/               # Arquivos estáticos
 ```
 
-**📖 Documentação técnica completa em [DOCS.md](./DOCS.md)**
+Documentação técnica completa em [DOCS.md](./DOCS.md).
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### Pré-requisitos
+### Pré-Requisitos
 
 - Node.js 18+
 - pnpm
@@ -99,7 +99,7 @@ CogniFlow/
 2. Execute o SQL em `supabase/schema.sql` no SQL Editor
 3. Copie as credenciais (URL + anon key) para `.env.local`
 
-### Rodar o Projeto
+### Executar o Projeto
 
 ```bash
 pnpm dev          # Desenvolvimento
@@ -112,38 +112,38 @@ pnpm type-check   # Verificar tipos
 
 ---
 
-## 🧪 Scripts Disponíveis
+## Scripts Disponíveis
 
-| Script | Descrição |
-|--------|-----------|
-| `pnpm dev` | Inicia servidor de desenvolvimento |
-| `pnpm build` | Build para produção |
-| `pnpm start` | Inicia servidor de produção |
-| `pnpm lint` | Executa ESLint |
-| `pnpm format` | Formata código com Prettier |
-| `pnpm type-check` | Verifica tipos TypeScript |
+| Script            | Descrição                          |
+| ----------------- | ---------------------------------- |
+| `pnpm dev`        | Inicia servidor de desenvolvimento |
+| `pnpm build`      | Build para produção                |
+| `pnpm start`      | Inicia servidor de produção        |
+| `pnpm lint`       | Executa ESLint                     |
+| `pnpm format`     | Formata código com Prettier        |
+| `pnpm type-check` | Verifica tipos TypeScript          |
 
 ---
 
-## 🚢 Deploy
+## Deploy
 
-### Vercel (Recomendado)
+### Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
 1. Conecte seu repositório GitHub
 2. Configure as variáveis de ambiente
-3. Deploy!
+3. Execute o deploy
 
 ### Outras Plataformas
 
-- **Netlify**: Suportado
-- **Railway**: Suportado
-- **Docker**: Dockerfile disponível (em breve)
+- **Netlify**: suportado
+- **Railway**: suportado
+- **Docker**: disponível em evolução
 
 ---
 
-## 🎨 Personalização
+## Personalização
 
 ### Cores do Tema
 
@@ -151,19 +151,19 @@ Edite `tailwind.config.js` e `styles/globals.css`:
 
 ```js
 cyber: {
-  blue: '#0ea5e9',   // Azul cibernético
+  blue: '#0ea5e9',
   cyan: '#06b6d4',   // Ciano
-  neon: '#10b981',   // Verde neon
+  neon: '#10b981',
 }
 ```
 
 ### Componentes
 
-Todos os componentes UI estão em `/components/ui` e podem ser customizados individualmente.
+Todos os componentes de interface estão em `/components/ui` e podem ser customizados individualmente.
 
 ---
 
-## 📚 Recursos e Documentação
+## Recursos e Documentação
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Supabase Documentation](https://supabase.com/docs)
@@ -173,24 +173,32 @@ Todos os componentes UI estão em `/components/ui` e podem ser customizados indi
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap de Produto
 
 ### Fase 1 - MVP (Atual)
+
 - [x] Setup do projeto
 - [x] Autenticação
 - [x] Homepage
 - [x] Componentes UI base
 - [x] Dashboard do usuário
-- [ ] Sistema de ideias
-- [ ] Templates básicos
+- [x] Sistema de ideias
+- [x] Templates básicos
+- [x] Área de times e colaboração inicial
+- [x] Convites de membros por link
 
-### Fase 2 - Features Core
-- [ ] Gerador de ideias com IA
-- [ ] Biblioteca completa de templates
-- [ ] Exportação para Lovable/Notion
-- [ ] Assistente IA completo
+### Fase 2 - Funcionalidades Core
+
+- [x] Gerador de ideias com IA
+- [x] Biblioteca de templates (v1)
+- [x] Exportação de conteúdo (v1)
+- [x] Assistente IA (v1)
+- [x] APIs server-side para times, membros, convites e ideias
+- [ ] Gestão avançada de permissões e papéis de time
+- [ ] Histórico e versionamento de conteúdo
 
 ### Fase 3 - Expansão
+
 - [ ] Integração com Figma
 - [ ] Colaboração em tempo real
 - [ ] Marketplace de templates
@@ -198,20 +206,6 @@ Todos os componentes UI estão em `/components/ui` e podem ser customizados indi
 
 ---
 
-## 🤝 Contribuindo
+## Posicionamento
 
-Contribuições são bem-vindas! Por favor:
-
-1. Faça um Fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
----
-
-<div align="center">
-
-**⭐ Se este projeto te ajudou, dê uma estrela!**
-
-</div>
+O Cogniflow atua como um workspace de inteligência criativa para acelerar descoberta, estruturação e execução de ideias. O foco do produto é reduzir tempo entre conceito e entrega, com colaboração, padronização e escala.
