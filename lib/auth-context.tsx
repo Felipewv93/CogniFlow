@@ -10,7 +10,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  signInWithProvider: (provider: 'google' | 'github') => Promise<void>;
+  signInWithProvider: (provider: 'google' | 'github', nextPath?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
-      
+
       if (event === 'SIGNED_OUT') {
         setUser(null);
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
@@ -39,18 +39,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else if (event === 'USER_UPDATED') {
         setUser(session?.user ?? null);
       }
-      
+
       setLoading(false);
     });
 
     // Renovar sessão a cada 5 minutos
-    const refreshInterval = setInterval(async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        await supabase.auth.refreshSession();
-        console.log('Session refreshed');
-      }
-    }, 5 * 60 * 1000); // 5 minutos
+    const refreshInterval = setInterval(
+      async () => {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session) {
+          await supabase.auth.refreshSession();
+          console.log('Session refreshed');
+        }
+      },
+      5 * 60 * 1000
+    ); // 5 minutos
 
     return () => {
       subscription.unsubscribe();
@@ -82,11 +87,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
-  const signInWithProvider = async (provider: 'google' | 'github') => {
+  const signInWithProvider = async (provider: 'google' | 'github', nextPath?: string) => {
+    const callbackUrl = new URL(`${window.location.origin}/auth/callback`);
+
+    if (nextPath) {
+      callbackUrl.searchParams.set('next', nextPath);
+    }
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: callbackUrl.toString(),
       },
     });
     if (error) throw error;
