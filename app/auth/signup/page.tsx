@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 export default function SignupPage() {
@@ -10,18 +10,24 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [nextPath, setNextPath] = useState('/dashboard');
   const { signUp, signInWithProvider } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const nextPath = searchParams.get('next') || '/dashboard';
-  const emailParam = searchParams.get('email') || '';
 
-  // Pré-preencher email se vindo de convite
+  // Lê parâmetros de query somente no cliente para evitar erro de prerender no build.
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get('next');
+    const emailParam = params.get('email');
+
+    if (next) {
+      setNextPath(next);
+    }
+
     if (emailParam) {
       setEmail(emailParam);
     }
-  }, [emailParam]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
