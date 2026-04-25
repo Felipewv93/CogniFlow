@@ -119,6 +119,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Next.js
     needs: [lint-and-types, test]
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-role-key
 
     steps:
       - uses: actions/checkout@v4
