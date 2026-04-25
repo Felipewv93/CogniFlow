@@ -1,24 +1,24 @@
 # ===================================
-# 📦 Dependencies (PRESENTE NO PROJETO)
+# Dependencies
 # ===================================
 node_modules/
 pnpm-lock.yaml
 
 # ===================================
-# ⚡ Next.js Build (PRESENTE NO PROJETO)
+# Next.js Build 
 # ===================================
 .next/
 out/
 next-env.d.ts
 
 # ===================================
-# 📘 TypeScript Build (PRESENTE NO PROJETO)
+# TypeScript Build
 # ===================================
 *.tsbuildinfo
 tsconfig.tsbuildinfo
 
 # ===================================
-# 🔐 Environment Variables (PRESENTE NO PROJETO)
+# Environment Variables
 # ===================================
 .env.local
 .env*.local
@@ -29,7 +29,7 @@ tsconfig.tsbuildinfo
 .env.example
 
 # ===================================
-# 🐛 Debug & Logs
+# Debug & Logs
 # ===================================
 npm-debug.log*
 yarn-debug.log*
@@ -37,12 +37,12 @@ pnpm-debug.log*
 *.log
 
 # ===================================
-# ☁️ Vercel
+# Vercel
 # ===================================
 .vercel
 
 # ===================================
-# �️ Operating System Files
+# Operating System Files
 # ===================================
 # macOS
 .DS_Store
@@ -56,7 +56,7 @@ ehthumbs.db
 $RECYCLE.BIN/
 
 # ===================================
-# � IDE & Editors
+# IDE & Editors
 # ===================================
 .vscode/
 .idea/
@@ -65,16 +65,15 @@ $RECYCLE.BIN/
 *.code-workspace
 
 # ===================================
-# � Security Files
+# Security Files
 # ===================================
 *.pem
 *.key
 
 # ===================================
-# 🧹 Outros
+# Outros
 # ===================================
 *.bak
 *.cache
 
-docs/
 scripts/
