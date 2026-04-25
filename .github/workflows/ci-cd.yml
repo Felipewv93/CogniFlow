@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [master, develop]
   pull_request:
-    branches: [ master, develop ]
+    branches: [master, develop]
 
 env:
   NODE_VERSION: '20'
@@ -14,50 +14,60 @@ jobs:
   lint-and-types:
     runs-on: ubuntu-latest
     name: Lint & Type Checking
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
       - name: Install dependencies
-        run: npm ci
-      
-      - name: Run ESLint
-        run: npm run lint --if-present
-      
+        run: pnpm install --frozen-lockfile
+
       - name: Check TypeScript types
-        run: npm run type-check --if-present
-      
+        run: pnpm run type-check --if-present
+
+      - name: Run ESLint
+        run: pnpm run lint --if-present
+
       - name: Check formatting with Prettier
-        run: npm run format:check --if-present
+        run: pnpm run format:check --if-present
 
   # Job 2: Unit & Integration Tests
   test:
     runs-on: ubuntu-latest
     name: Unit & Integration Tests
     needs: lint-and-types
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
       - name: Install dependencies
-        run: npm ci
-      
+        run: pnpm install --frozen-lockfile
+
       - name: Run unit tests
-        run: npm run test:unit --if-present
-      
+        run: pnpm run test:unit --if-present
+
       - name: Generate coverage report
-        run: npm run test:coverage --if-present
-      
+        run: pnpm run test:coverage --if-present
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
@@ -70,26 +80,31 @@ jobs:
     runs-on: ubuntu-latest
     name: Security & Vulnerability Scan
     needs: lint-and-types
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
       - name: Install dependencies
-        run: npm ci
-      
+        run: pnpm install --frozen-lockfile
+
       - name: Run npm audit
-        run: npm audit --audit-level=moderate
+        run: pnpm audit --audit-level=moderate
         continue-on-error: true
-      
+
       - name: Run security tests
-        run: npm run test:security --if-present
+        run: pnpm run test:security --if-present
         continue-on-error: true
-      
+
       - name: OWASP Dependency Check
         uses: jeremylong/DependencyCheck_Action@main
         with:
@@ -103,23 +118,28 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Next.js
     needs: [lint-and-types, test]
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
       - name: Install dependencies
-        run: npm ci
-      
+        run: pnpm install --frozen-lockfile
+
       - name: Build project
-        run: npm run build
-      
+        run: pnpm run build
+
       - name: Check bundle size
-        run: npm run test:bundle --if-present
+        run: pnpm run test:bundle --if-present
         continue-on-error: true
 
   # Job 5: E2E Tests (opcional, só em PRs e main)
@@ -128,25 +148,30 @@ jobs:
     name: E2E Tests
     needs: build
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
       - name: Install dependencies
-        run: npm ci
-      
+        run: pnpm install --frozen-lockfile
+
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-      
+        run: pnpm exec playwright install --with-deps
+
       - name: Run E2E tests
-        run: npm run test:e2e --if-present
+        run: pnpm run test:e2e --if-present
         continue-on-error: true
-      
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v3
@@ -159,22 +184,27 @@ jobs:
     runs-on: ubuntu-latest
     name: Performance & Accessibility
     needs: build
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
+          cache: 'pnpm'
+          cache-dependency-path: pnpm-lock.yaml
+
       - name: Install dependencies
-        run: npm ci
-      
+        run: pnpm install --frozen-lockfile
+
       - name: Run accessibility tests
-        run: npm run test:a11y --if-present
+        run: pnpm run test:a11y --if-present
         continue-on-error: true
-      
+
       - name: Lighthouse CI
         uses: treosh/lighthouse-ci-action@v10
         with:
@@ -189,10 +219,17 @@ jobs:
     name: Test Summary
     needs: [lint-and-types, test, security, build, e2e, quality]
     if: always()
-    
+
     steps:
       - name: Check if all tests passed
         run: |
+          echo "lint-and-types: ${{ needs.lint-and-types.result }}"
+          echo "test: ${{ needs.test.result }}"
+          echo "security: ${{ needs.security.result }}"
+          echo "build: ${{ needs.build.result }}"
+          echo "e2e: ${{ needs.e2e.result }}"
+          echo "quality: ${{ needs.quality.result }}"
+
           if [ "${{ needs.lint-and-types.result }}" = "failure" ] || \
              [ "${{ needs.test.result }}" = "failure" ] || \
              [ "${{ needs.security.result }}" = "failure" ] || \
@@ -209,7 +246,7 @@ jobs:
     name: Notify Status
     needs: summary
     if: always()
-    
+
     steps:
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v1
