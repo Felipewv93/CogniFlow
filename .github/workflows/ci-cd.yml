@@ -31,13 +31,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Check TypeScript types
-        run: pnpm run type-check --if-present
+        run: pnpm run type-check
 
       - name: Run ESLint
-        run: pnpm run lint --if-present
+        run: pnpm run lint
 
       - name: Check formatting with Prettier
-        run: pnpm run format:check --if-present
+        run: pnpm run format:check
 
   # Job 2: Unit & Integration Tests
   test:
@@ -61,10 +61,10 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run unit tests
-        run: pnpm run test:unit --if-present
+        run: pnpm run test:unit
 
       - name: Generate coverage report
-        run: pnpm run test:coverage --if-present
+        run: pnpm run test:coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -99,7 +99,7 @@ jobs:
         continue-on-error: true
 
       - name: Run security tests
-        run: pnpm run test:security --if-present
+        run: pnpm run test:security
         continue-on-error: true
 
       - name: OWASP Dependency Check
@@ -135,7 +135,7 @@ jobs:
         run: pnpm run build
 
       - name: Check bundle size
-        run: pnpm run test:bundle --if-present
+        run: pnpm run test:bundle
         continue-on-error: true
 
   # Job 5: E2E Tests (opcional, só em PRs e main)
@@ -164,7 +164,7 @@ jobs:
         run: pnpm exec playwright install --with-deps
 
       - name: Run E2E tests
-        run: pnpm run test:e2e --if-present
+        run: pnpm run test:e2e
         continue-on-error: true
 
       - name: Upload test results
@@ -196,15 +196,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run accessibility tests
-        run: pnpm run test:a11y --if-present
-        continue-on-error: true
-
-      - name: Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v10
-        with:
-          configPath: './tests/config/lighthouse.config.json'
-          uploadArtifacts: true
-          temporaryPublicStorage: true
+        run: pnpm run test:a11y
         continue-on-error: true
 
   # Job 7: Summary
