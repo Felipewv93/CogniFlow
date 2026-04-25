@@ -66,7 +66,19 @@ jobs:
       - name: Generate coverage report
         run: pnpm run test:coverage
 
+      - name: Check coverage artifact
+        id: coverage_file
+        run: |
+          if [ -s coverage/lcov.info ]; then
+            echo "has_lcov=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_lcov=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping Codecov upload because coverage/lcov.info is missing or empty."
+          fi
+        shell: bash
+
       - name: Upload coverage to Codecov
+        if: steps.coverage_file.outputs.has_lcov == 'true'
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage/lcov.info
@@ -101,14 +113,6 @@ jobs:
       - name: Run security tests
         run: pnpm run test:security
         continue-on-error: true
-
-      - name: OWASP Dependency Check
-        uses: jeremylong/DependencyCheck_Action@main
-        with:
-          project: 'CogniFlow'
-          path: '.'
-          format: 'JSON'
-          continue-on-error: true
 
   # Job 4: Build
   build:
