@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 describe('Unit Tests - Architecture Components', () => {
   describe('Utils - Helper Functions', () => {
@@ -102,18 +102,18 @@ describe('Unit Tests - Architecture Components', () => {
 
   describe('API Routes - Endpoint Validation', () => {
     it('should validate API route structure', () => {
-      const apiRoutes = {
-        '/api/auth/login': 'POST',
-        '/api/auth/logout': 'POST',
-        '/api/auth/signup': 'POST',
-        '/api/chat': 'POST',
-        '/api/generate-idea': 'POST',
-        '/api/templates': 'GET',
-        '/api/teams': 'GET',
-        '/api/teams': 'POST',
-      };
+      const apiRoutes: Array<[string, 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH']> = [
+        ['/api/auth/login', 'POST'],
+        ['/api/auth/logout', 'POST'],
+        ['/api/auth/signup', 'POST'],
+        ['/api/chat', 'POST'],
+        ['/api/generate-idea', 'POST'],
+        ['/api/templates', 'GET'],
+        ['/api/teams', 'GET'],
+        ['/api/teams', 'POST'],
+      ];
 
-      Object.entries(apiRoutes).forEach(([route, method]) => {
+      apiRoutes.forEach(([route, method]) => {
         expect(route).toMatch(/^\/api\//);
         expect(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']).toContain(method);
       });
@@ -208,7 +208,9 @@ describe('Unit Tests - Architecture Components', () => {
   });
 
   describe('Performance - Optimization Checks', () => {
-    it('should validate debounce pattern', (done) => {
+    it('should validate debounce pattern', async () => {
+      vi.useFakeTimers();
+
       let callCount = 0;
       const debounce = (fn: Function, delay: number) => {
         let timeoutId: NodeJS.Timeout;
@@ -224,10 +226,11 @@ describe('Unit Tests - Architecture Components', () => {
       debouncedFn();
       debouncedFn();
 
-      setTimeout(() => {
-        expect(callCount).toBe(1);
-        done();
-      }, 150);
+      await vi.advanceTimersByTimeAsync(150);
+
+      expect(callCount).toBe(1);
+
+      vi.useRealTimers();
     });
 
     it('should validate memoization pattern', () => {
@@ -304,10 +307,10 @@ describe('Unit Tests - Architecture Components', () => {
       }
 
       const mockCrud: CrudOps<{ id: string; name: string }> = {
-        create: async (data) => ({ id: '1', ...data }),
-        read: async (id) => ({ id, name: 'Test' }),
-        update: async (id, data) => ({ id, name: data.name || 'Test' }),
-        delete: async (id) => true,
+        create: async (data) => data,
+        read: async (_id) => ({ id: '1', name: 'Test' }),
+        update: async (_id, data) => ({ id: '1', name: data.name || 'Test' }),
+        delete: async (_id) => true,
       };
 
       expect(mockCrud).toHaveProperty('create');
@@ -368,7 +371,7 @@ describe('Unit Tests - Architecture Components', () => {
     it('should validate middleware pattern', () => {
       type Middleware = (req: any, res: any, next: Function) => void;
 
-      const loggingMiddleware: Middleware = (req, res, next) => {
+      const loggingMiddleware: Middleware = (req, _res, next) => {
         console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
         next();
       };
