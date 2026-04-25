@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Navbar } from '@/components/layout/navbar';
 import { useAuth } from '@/lib/auth-context';
 import { supabase } from '@/supabase/client';
+import { UI_MESSAGES } from '@/utils/constants';
 
 // Função para formatar markdown para JSX
 function formatMarkdown(text: string) {
@@ -169,7 +170,7 @@ export default function AssistantPage() {
       ]);
     } catch (error: any) {
       console.error('Erro no chat:', error);
-      toast.error(error.message || 'Erro ao enviar mensagem');
+      toast.error(UI_MESSAGES.CHAT_SEND_ERROR);
       setMessages((prev) => prev.slice(0, -1));
     } finally {
       setLoading(false);

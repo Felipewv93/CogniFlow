@@ -1,16 +1,171 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, getRequestIp } from '@/lib/helpers/rate-limit';
 
 // Modo DEMO - Desativa automaticamente quando tiver API key
 const DEMO_MODE = !process.env.GEMINI_API_KEY;
+const IDEAS_CACHE_TTL_MS = 10 * 60 * 1000;
+
+type CachedIdeasEntry = {
+  ideas: any[];
+  expiresAt: number;
+};
+
+const ideasCache = new Map<string, CachedIdeasEntry>();
+
+function buildIdeasCacheKey(prompt: string, category?: string, tone?: string): string {
+  const normalizedPrompt = prompt.trim().toLowerCase();
+  const normalizedCategory = (category || '').trim().toLowerCase();
+  const normalizedTone = (tone || '').trim().toLowerCase();
+  return `${normalizedPrompt}::${normalizedCategory}::${normalizedTone}`;
+}
+
+function getCachedIdeas(cacheKey: string): any[] | null {
+  const current = ideasCache.get(cacheKey);
+  if (!current) {
+    return null;
+  }
+
+  if (Date.now() >= current.expiresAt) {
+    ideasCache.delete(cacheKey);
+    return null;
+  }
+
+  return current.ideas;
+}
+
+function setCachedIdeas(cacheKey: string, ideas: any[]): void {
+  const now = Date.now();
+
+  // Limpeza leve para evitar crescimento indefinido do map.
+  for (const [key, entry] of ideasCache.entries()) {
+    if (entry.expiresAt <= now) {
+      ideasCache.delete(key);
+    }
+  }
+
+  ideasCache.set(cacheKey, {
+    ideas,
+    expiresAt: now + IDEAS_CACHE_TTL_MS,
+  });
+}
+
+function isGeminiQuotaExceeded(status: number, errorBody: any): boolean {
+  if (status === 429) {
+    return true;
+  }
+
+  const errorText = JSON.stringify(errorBody || {}).toLowerCase();
+  return errorText.includes('resource_exhausted') || errorText.includes('quota');
+}
+
+function isGeminiModelUnavailable(status: number, errorBody: any): boolean {
+  if (status === 404) {
+    return true;
+  }
+
+  const errorText = JSON.stringify(errorBody || {}).toLowerCase();
+  return (
+    errorText.includes('not found') ||
+    (errorText.includes('model') && errorText.includes('supported')) ||
+    (errorText.includes('api version') && errorText.includes('not found'))
+  );
+}
+
+function buildQuotaFallbackIdeas(prompt: string, category?: string, tone?: string) {
+  const safePrompt = prompt || 'sua ideia';
+  const toneText = tone ? `Tom sugerido: ${tone}.` : 'Tom sugerido: claro e objetivo.';
+  const categoryText = category ? `Foco na categoria ${category}.` : 'Foco no público principal.';
+
+  return [
+    {
+      title: `${safePrompt} em versão MVP validável`,
+      description:
+        `Comece com uma versão mínima de ${safePrompt.toLowerCase()} para validar demanda real com usuários em até 2 semanas. ` +
+        `${categoryText} ${toneText}`,
+      keyPoints: [
+        'Definir uma dor principal para resolver',
+        'Lançar uma versão com 1 funcionalidade central',
+        'Coletar feedback com entrevistas curtas',
+      ],
+      nextSteps: [
+        'Criar landing page com proposta de valor',
+        'Convidar 10 usuários para teste inicial',
+        'Medir ativação e retenção da primeira semana',
+      ],
+    },
+    {
+      title: `${safePrompt} com estratégia de distribuição`,
+      description:
+        `Estruture canais de aquisição desde o início para ${safePrompt.toLowerCase()}. ` +
+        'Combine conteúdo, parcerias e rotina de experimentos semanais para acelerar aprendizado.',
+      keyPoints: [
+        'Escolher 2 canais de aquisição prioritários',
+        'Definir uma oferta inicial simples',
+        'Executar testes semanais com hipótese clara',
+      ],
+      nextSteps: [
+        'Montar calendário de conteúdo de 30 dias',
+        'Mapear 5 parceiros potenciais do nicho',
+        'Acompanhar custo por lead e conversão',
+      ],
+    },
+    {
+      title: `${safePrompt} com operação inteligente`,
+      description:
+        `Planeje processos de operação e automação para sustentar crescimento de ${safePrompt.toLowerCase()} sem aumentar custos rapidamente. ` +
+        'Priorize padronização e indicadores de desempenho.',
+      keyPoints: [
+        'Definir fluxo operacional ponta a ponta',
+        'Automatizar tarefas repetitivas',
+        'Acompanhar métricas de qualidade e prazo',
+      ],
+      nextSteps: [
+        'Documentar processo atual em etapas',
+        'Selecionar 2 automações para implementar',
+        'Criar painel simples de KPIs semanais',
+      ],
+    },
+  ];
+}
 
 export async function POST(request: NextRequest) {
+  let prompt = '';
+  let category: string | undefined;
+  let tone: string | undefined;
+  let teamId: string | undefined;
+  let cacheKey = '';
+
   try {
-    const { prompt, category, tone, teamId } = await request.json();
+    ({ prompt, category, tone, teamId } = await request.json());
+
+    const ip = getRequestIp(request.headers);
+    const limit = checkRateLimit(`generate-idea:${ip}`, 12, 60_000);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Muitas requisições. Tente novamente em instantes.',
+          retryAfterSeconds: limit.retryAfterSeconds,
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(limit.retryAfterSeconds),
+          },
+        }
+      );
+    }
 
     console.log('💡 Generate Idea API - Prompt:', prompt?.substring(0, 50));
 
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt é obrigatório' }, { status: 400 });
+    }
+
+    cacheKey = buildIdeasCacheKey(prompt, category, tone);
+
+    const cachedIdeas = getCachedIdeas(cacheKey);
+    if (cachedIdeas) {
+      return NextResponse.json({ ideas: cachedIdeas, teamId });
     }
 
     // MODO DEMO - Retorna ideias personalizadas baseadas no prompt
@@ -263,9 +418,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ideas, teamId });
     }
 
-    // MODO PRODUÇÃO - Usa Google Gemini 2.0 Flash (gratuito!)
+    // MODO PRODUÇÃO - Tenta modelos em sequência para reduzir falhas por cota
     const apiKey = process.env.GEMINI_API_KEY!;
-    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const apiVersionsToTry = ['v1beta'];
+    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
 
     const userPrompt = `Você é um assistente criativo especializado em gerar ideias inovadoras e detalhadas. 
 Seu objetivo é ajudar pessoas a desenvolver conceitos criativos para projetos, negócios, conteúdo e muito mais.
@@ -293,37 +449,104 @@ Formato de resposta em JSON:
   ]
 }`;
 
-    const apiResponse = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: userPrompt }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 2000,
-        },
-      }),
-    });
+    let text = '';
+    let sawQuotaError = false;
+    let sawModelUnavailable = false;
+    for (const apiVersion of apiVersionsToTry) {
+      for (const model of modelsToTry) {
+        const apiUrl = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`;
 
-    if (!apiResponse.ok) {
-      const error = await apiResponse.json();
-      throw new Error(`Gemini API error: ${JSON.stringify(error)}`);
+        const apiResponse = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: userPrompt }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.8,
+              maxOutputTokens: 1200,
+            },
+          }),
+        });
+
+        if (!apiResponse.ok) {
+          const errorBody = await apiResponse.json().catch(() => ({}));
+
+          if (isGeminiQuotaExceeded(apiResponse.status, errorBody)) {
+            sawQuotaError = true;
+            continue;
+          }
+
+          if (isGeminiModelUnavailable(apiResponse.status, errorBody)) {
+            sawModelUnavailable = true;
+            continue;
+          }
+
+          throw new Error(`Gemini API error (${apiResponse.status})`);
+        }
+
+        const data = await apiResponse.json();
+        text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        if (text) {
+          break;
+        }
+      }
+
+      if (text) {
+        break;
+      }
     }
 
-    const data = await apiResponse.json();
-    const text = data.candidates[0].content.parts[0].text;
+    if (!text && sawQuotaError) {
+      throw new Error('GEMINI_QUOTA_EXCEEDED');
+    }
+
+    if (!text && sawModelUnavailable) {
+      throw new Error('GEMINI_MODEL_UNAVAILABLE');
+    }
+
+    if (!text) {
+      throw new Error('Gemini API response vazia');
+    }
 
     // Extrair JSON da resposta (pode vir com markdown)
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const ideas = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+    const parsedIdeas = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+    const generatedIdeas = Array.isArray(parsedIdeas?.ideas) ? parsedIdeas.ideas : [];
 
-    return NextResponse.json({ ...ideas, teamId });
+    if (!generatedIdeas.length) {
+      throw new Error('Resposta sem ideias válidas');
+    }
+
+    setCachedIdeas(cacheKey, generatedIdeas);
+
+    return NextResponse.json({
+      ideas: generatedIdeas,
+      teamId,
+    });
   } catch (error: any) {
     console.error('Erro ao gerar ideias:', error);
+
+    if (error?.message === 'GEMINI_QUOTA_EXCEEDED') {
+      return NextResponse.json({
+        ideas: buildQuotaFallbackIdeas(prompt, category, tone),
+        teamId,
+        fallback: true,
+      });
+    }
+
+    if (error?.message === 'GEMINI_MODEL_UNAVAILABLE') {
+      return NextResponse.json({
+        ideas: buildQuotaFallbackIdeas(prompt, category, tone),
+        teamId,
+        fallback: true,
+      });
+    }
+
     return NextResponse.json({ error: error.message || 'Erro ao gerar ideias' }, { status: 500 });
   }
 }

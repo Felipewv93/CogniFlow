@@ -141,4 +141,9 @@ export const ROUTES = {
   },
 } as const;
 
+export const UI_MESSAGES = {
+  GENERATE_IDEA_ERROR: 'Não foi possível gerar ideias agora. Tente novamente em instantes.',
+  CHAT_SEND_ERROR: 'Não foi possível enviar a mensagem agora. Tente novamente em instantes.',
+} as const;
+
 import type { IdeaCategory, TemplateCategory, ExportPlatform } from '@/types';
