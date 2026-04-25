@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { Gift, Zap } from 'lucide-react';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -143,8 +144,16 @@ export default function SignupPage() {
         </p>
 
         <div className="mt-8 rounded-lg bg-muted/50 p-4">
-          <p className="text-center text-xs text-muted-foreground">
-            ✨ Sem necessidade de cartão de crédito • Templates ilimitados
+          <p className="text-center text-xs text-muted-foreground flex flex-wrap items-center justify-center gap-2">
+            <span className="flex items-center gap-1">
+              <Gift className="h-3 w-3" />
+              Sem necessidade de cartão de crédito
+            </span>
+            <span className="text-muted-foreground">•</span>
+            <span className="flex items-center gap-1">
+              <Zap className="h-3 w-3" />
+              Templates ilimitados
+            </span>
           </p>
         </div>
       </div>
