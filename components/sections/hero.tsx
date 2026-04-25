@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, Zap, Wand2, Gift } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { ROUTES } from '@/utils/constants';
 
@@ -69,9 +69,22 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="mt-12 text-sm text-muted-foreground"
+            className="mt-12 text-sm text-muted-foreground flex flex-wrap items-center justify-center gap-3"
           >
-            ✨ Sem necessidade de cartão de crédito • 🚀 Templates ilimitados • 🤖 IA integrada
+            <span className="flex items-center gap-1">
+              <Gift className="h-4 w-4" />
+              Sem necessidade de cartão de crédito
+            </span>
+            <span className="text-muted-foreground">•</span>
+            <span className="flex items-center gap-1">
+              <Zap className="h-4 w-4" />
+              Templates ilimitados
+            </span>
+            <span className="text-muted-foreground">•</span>
+            <span className="flex items-center gap-1">
+              <Wand2 className="h-4 w-4" />
+              IA integrada
+            </span>
           </motion.div>
         </motion.div>
 
