@@ -1,7 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, getRequestIp } from '@/lib/helpers/rate-limit';
 
 // Modo DEMO - Desativa automaticamente quando tiver API key
 const DEMO_MODE = !process.env.GEMINI_API_KEY;
+const CHAT_CONTEXT_WINDOW = 10;
+const CHAT_MESSAGE_CHAR_LIMIT = 500;
+
+function isGeminiQuotaExceeded(status: number, errorBody: any): boolean {
+  if (status === 429) {
+    return true;
+  }
+
+  const errorText = JSON.stringify(errorBody || {}).toLowerCase();
+  return errorText.includes('resource_exhausted') || errorText.includes('quota');
+}
+
+function isGeminiModelUnavailable(status: number, errorBody: any): boolean {
+  if (status === 404) {
+    return true;
+  }
+
+  const errorText = JSON.stringify(errorBody || {}).toLowerCase();
+  return (
+    errorText.includes('not found') ||
+    (errorText.includes('model') && errorText.includes('supported')) ||
+    (errorText.includes('api version') && errorText.includes('not found'))
+  );
+}
+
+function buildCompactConversation(messages: any[]): string {
+  const recentMessages = messages.slice(-CHAT_CONTEXT_WINDOW);
+
+  return recentMessages
+    .map((msg: any) => {
+      const role = msg.role === 'user' ? 'Usuário' : 'Assistente';
+      const content = String(msg.content || '').slice(0, CHAT_MESSAGE_CHAR_LIMIT);
+      return `${role}: ${content}`;
+    })
+    .join('\n\n');
+}
 
 // Função para gerar respostas contextuais e personalizadas
 function generateContextualResponse(userMessage: string): string {
@@ -89,8 +126,27 @@ function generateContextualResponse(userMessage: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  let messages: any[] = [];
+
   try {
-    const { messages } = await request.json();
+    ({ messages } = await request.json());
+
+    const ip = getRequestIp(request.headers);
+    const limit = checkRateLimit(`chat:${ip}`, 30, 60_000);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        {
+          error: 'Muitas mensagens em pouco tempo. Aguarde alguns segundos.',
+          retryAfterSeconds: limit.retryAfterSeconds,
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(limit.retryAfterSeconds),
+          },
+        }
+      );
+    }
 
     console.log('📨 Chat API - Mensagens recebidas:', messages?.length);
 
@@ -113,9 +169,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // MODO PRODUÇÃO - Usa Google Gemini 2.0 Flash (gratuito!)
+    // MODO PRODUÇÃO - Tenta modelos em sequência para reduzir falhas por cota
     const apiKey = process.env.GEMINI_API_KEY!;
-    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const apiVersionsToTry = ['v1beta'];
+    const modelsToTry = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
 
     const systemPrompt = `Você é o Assistente Cogniflow, um especialista em criatividade e inovação.
 Você ajuda pessoas a desenvolver ideias, fazer brainstorming, resolver problemas criativos e planejar projetos.
@@ -136,35 +193,74 @@ Sempre que possível:
 5. Celebre progressos e ideias do usuário`;
 
     // Construir conversa completa incluindo histórico
-    const fullConversation = messages
-      .map((msg: any) => `${msg.role === 'user' ? 'Usuário' : 'Assistente'}: ${msg.content}`)
-      .join('\n\n');
+    const fullConversation = buildCompactConversation(messages);
 
     const prompt = `${systemPrompt}\n\nConversa:\n${fullConversation}\n\nAssistente:`;
 
-    const apiResponse = await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: prompt }],
-          },
-        ],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 1000,
-        },
-      }),
-    });
+    let text = '';
+    let sawQuotaError = false;
+    let sawModelUnavailable = false;
 
-    if (!apiResponse.ok) {
-      const error = await apiResponse.json();
-      throw new Error(`Gemini API error: ${JSON.stringify(error)}`);
+    for (const apiVersion of apiVersionsToTry) {
+      for (const model of modelsToTry) {
+        const apiUrl = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${apiKey}`;
+
+        const apiResponse = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: prompt }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 700,
+            },
+          }),
+        });
+
+        if (!apiResponse.ok) {
+          const errorBody = await apiResponse.json().catch(() => ({}));
+
+          if (isGeminiQuotaExceeded(apiResponse.status, errorBody)) {
+            sawQuotaError = true;
+            continue;
+          }
+
+          if (isGeminiModelUnavailable(apiResponse.status, errorBody)) {
+            sawModelUnavailable = true;
+            continue;
+          }
+
+          throw new Error(`Gemini API error (${apiResponse.status})`);
+        }
+
+        const data = await apiResponse.json();
+        text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        if (text) {
+          break;
+        }
+      }
+
+      if (text) {
+        break;
+      }
     }
 
-    const data = await apiResponse.json();
-    const text = data.candidates[0].content.parts[0].text;
+    if (!text && sawQuotaError) {
+      throw new Error('GEMINI_QUOTA_EXCEEDED');
+    }
+
+    if (!text && sawModelUnavailable) {
+      throw new Error('GEMINI_MODEL_UNAVAILABLE');
+    }
+
+    if (!text) {
+      throw new Error('Gemini API response vazia');
+    }
 
     return NextResponse.json({
       message: text,
@@ -172,6 +268,29 @@ Sempre que possível:
     });
   } catch (error: any) {
     console.error('Erro no chat:', error);
+
+    if (error?.message === 'GEMINI_QUOTA_EXCEEDED') {
+      const lastMessage = messages[messages.length - 1];
+      const fallbackText = generateContextualResponse(lastMessage?.content || '');
+
+      return NextResponse.json({
+        message: fallbackText,
+        role: 'assistant',
+        fallback: true,
+      });
+    }
+
+    if (error?.message === 'GEMINI_MODEL_UNAVAILABLE') {
+      const lastMessage = messages[messages.length - 1];
+      const fallbackText = generateContextualResponse(lastMessage?.content || '');
+
+      return NextResponse.json({
+        message: fallbackText,
+        role: 'assistant',
+        fallback: true,
+      });
+    }
+
     return NextResponse.json(
       { error: error.message || 'Erro ao processar mensagem' },
       { status: 500 }
