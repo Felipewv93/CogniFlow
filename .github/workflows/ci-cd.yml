@@ -1,0 +1,231 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # Job 1: Lint & Type Checking
+  lint-and-types:
+    runs-on: ubuntu-latest
+    name: Lint & Type Checking
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run lint --if-present
+      
+      - name: Check TypeScript types
+        run: npm run type-check --if-present
+      
+      - name: Check formatting with Prettier
+        run: npm run format:check --if-present
+
+  # Job 2: Unit & Integration Tests
+  test:
+    runs-on: ubuntu-latest
+    name: Unit & Integration Tests
+    needs: lint-and-types
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run unit tests
+        run: npm run test:unit --if-present
+      
+      - name: Generate coverage report
+        run: npm run test:coverage --if-present
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # Job 3: Security Scanning
+  security:
+    runs-on: ubuntu-latest
+    name: Security & Vulnerability Scan
+    needs: lint-and-types
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+      
+      - name: Run security tests
+        run: npm run test:security --if-present
+        continue-on-error: true
+      
+      - name: OWASP Dependency Check
+        uses: jeremylong/DependencyCheck_Action@main
+        with:
+          project: 'CogniFlow'
+          path: '.'
+          format: 'JSON'
+          continue-on-error: true
+
+  # Job 4: Build
+  build:
+    runs-on: ubuntu-latest
+    name: Build Next.js
+    needs: [lint-and-types, test]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build project
+        run: npm run build
+      
+      - name: Check bundle size
+        run: npm run test:bundle --if-present
+        continue-on-error: true
+
+  # Job 5: E2E Tests (opcional, só em PRs e main)
+  e2e:
+    runs-on: ubuntu-latest
+    name: E2E Tests
+    needs: build
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Run E2E tests
+        run: npm run test:e2e --if-present
+        continue-on-error: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+  # Job 6: Performance & Accessibility
+  quality:
+    runs-on: ubuntu-latest
+    name: Performance & Accessibility
+    needs: build
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run accessibility tests
+        run: npm run test:a11y --if-present
+        continue-on-error: true
+      
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: './tests/config/lighthouse.config.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true
+
+  # Job 7: Summary
+  summary:
+    runs-on: ubuntu-latest
+    name: Test Summary
+    needs: [lint-and-types, test, security, build, e2e, quality]
+    if: always()
+    
+    steps:
+      - name: Check if all tests passed
+        run: |
+          if [ "${{ needs.lint-and-types.result }}" = "failure" ] || \
+             [ "${{ needs.test.result }}" = "failure" ] || \
+             [ "${{ needs.security.result }}" = "failure" ] || \
+             [ "${{ needs.build.result }}" = "failure" ]; then
+            echo "❌ Some checks failed"
+            exit 1
+          fi
+          echo "✅ All critical checks passed!"
+        shell: bash
+
+  # Notification (opcional)
+  notify:
+    runs-on: ubuntu-latest
+    name: Notify Status
+    needs: summary
+    if: always()
+    
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1
+        if: failure()
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "CogniFlow CI/CD Pipeline Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Workflow:* ${{ github.workflow }}\n*Status:* Failed ❌\n*Branch:* ${{ github.ref }}\n*Commit:* ${{ github.sha }}"
+                  }
+                }
+              ]
+            }
