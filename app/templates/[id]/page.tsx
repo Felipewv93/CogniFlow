@@ -336,7 +336,7 @@ export default function TemplateDetailPage() {
                         value={fieldValues[field.id] || ''}
                         onChange={(e) => handleFieldChange(field.id, e.target.value)}
                         placeholder={field.placeholder}
-                        className="w-full rounded-lg border bg-background px-4 py-3 transition focus:border-cyber-blue focus:ring-2 focus:ring-cyber-blue"
+                        className="w-full rounded-lg border bg-background px-4 py-3 transition focus:border-black focus:ring-2 focus:ring-black"
                       />
                     )}
                   </div>
