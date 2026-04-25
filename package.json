@@ -21,7 +21,7 @@
     "test:security": "vitest run tests/security",
     "test:a11y": "vitest run tests/accessibility",
     "test:performance": "vitest run tests/performance",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run tests/unit tests/config --coverage --coverage.reporter=text --coverage.reporter=lcov",
     "test:watch": "vitest watch",
     "test:bundle": "npm run build && webpack-bundle-analyzer dist/bundle.js",
     "test:all": "npm run lint && npm run type-check && npm run test:coverage && npm run test:e2e"
@@ -73,6 +73,7 @@
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.5",
     "@vitest/ui": "^4.1.5",
     "autoprefixer": "^10.4.0",
     "axe-core": "^4.11.3",
