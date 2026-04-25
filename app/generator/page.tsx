@@ -7,6 +7,7 @@ import { Navbar } from '@/components/layout/navbar';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { UI_MESSAGES } from '@/utils/constants';
 
 interface Idea {
   title: string;
@@ -76,7 +77,7 @@ export default function GeneratorPage() {
       toast.success('Ideias geradas com sucesso!');
     } catch (error: any) {
       console.error('Erro ao gerar ideias:', error);
-      toast.error(error.message || 'Erro ao gerar ideias');
+      toast.error(UI_MESSAGES.GENERATE_IDEA_ERROR);
     } finally {
       setLoading(false);
     }
