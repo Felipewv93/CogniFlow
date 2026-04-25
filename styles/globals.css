@@ -49,11 +49,11 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 0 0% 0%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    --card: 0 0% 0%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 0 0% 0%;
     --popover-foreground: 210 40% 98%;
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 47.4% 11.2%;
@@ -65,8 +65,8 @@
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 270 50% 20%;
+    --input: 270 40% 12%;
     --ring: 224.3 76.3% 48%;
   }
 }
@@ -79,6 +79,11 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  body.dark {
+    background: linear-gradient(135deg, #1a001f 0%, #0a0015 25%, #000000 50%, #150a1f 75%, #1f0a2f 100%) !important;
+    background-attachment: fixed;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -109,13 +114,27 @@
                       linear-gradient(to right, #0ea5e9, #06b6d4, #10b981);
     background-clip: padding-box, border-box;
   }
-  
+
   .cyber-glow {
     @apply shadow-lg shadow-cyber-cyan/20;
   }
   
   .glass-effect {
     @apply bg-white/10 backdrop-blur-lg border border-white/20;
+  }
+
+  /* Premium card styling with glass effect */
+  .card {
+    @apply relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-md transition-all duration-300 hover:border-cyan-400/40 hover:bg-white/10 hover:shadow-lg hover:shadow-cyan-500/20;
+  }
+
+  .card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 pointer-events-none;
+  }
+
+  .card:hover::before {
+    @apply from-cyan-500/10 to-purple-500/10;
   }
   
   .container-padding {
