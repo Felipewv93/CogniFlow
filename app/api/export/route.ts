@@ -75,9 +75,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Erro no GET /api/export:', error);
-    return NextResponse.json(
-      { error: 'Erro ao exportar dados' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erro ao exportar dados' }, { status: 500 });
   }
 }

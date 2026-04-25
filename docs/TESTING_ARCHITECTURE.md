@@ -70,6 +70,7 @@ tests/
 ### Instalação
 
 1. Instale as dependências:
+
 ```bash
 npm install --save-dev \
   vitest \
@@ -120,36 +121,42 @@ npm run test:all
 ## Estrutura de Testes por Arquitetura
 
 ### Frontend (React/Next.js)
+
 - Testes unitários de componentes
 - Testes de hooks customizados
 - Testes de páginas
 - Testes E2E com Playwright
 
 ### Backend (API Routes)
+
 - Testes de routes
 - Testes de middleware
 - Testes de validação
 - Testes de erro handling
 
 ### Database (Supabase)
+
 - Testes de queries
 - Testes de transações
 - Testes de constraints
 - Testes de migrações
 
 ### Segurança
+
 - Auditoria de dependências (npm audit)
 - Scanning de vulnerabilidades
 - Testes OWASP Top 10
 - Validação de inputs
 
 ### Performance
+
 - Lighthouse CI
 - Bundle size analysis
 - Render performance
 - Network waterfalls
 
 ### Acessibilidade
+
 - WCAG 2.1 Level AA
 - axe-core automated tests
 - Keyboard navigation
@@ -171,6 +178,7 @@ O arquivo `.github/workflows/ci-cd.yml` configura automaticamente:
 ## Convenções de Nomenclatura
 
 ### Testes Unitários
+
 ```
 src/components/Button/Button.test.tsx
 src/lib/utils/cn.test.ts
@@ -178,12 +186,14 @@ src/hooks/useIdeas.test.ts
 ```
 
 ### Testes de Integração
+
 ```
 tests/integration/api/auth.integration.test.ts
 tests/integration/database/templates.integration.test.ts
 ```
 
 ### Testes E2E
+
 ```
 tests/e2e/auth.spec.ts
 tests/e2e/dashboard.spec.ts
@@ -191,10 +201,10 @@ tests/e2e/dashboard.spec.ts
 
 ## Metas de Cobertura
 
-| Camada | Meta | Atual |
-|--------|------|-------|
-| Components | 80% | - |
-| Hooks | 90% | - |
-| Utils | 95% | - |
-| API Routes | 85% | - |
-| lib | 90% | - |
+| Camada     | Meta | Atual |
+| ---------- | ---- | ----- |
+| Components | 80%  | -     |
+| Hooks      | 90%  | -     |
+| Utils      | 95%  | -     |
+| API Routes | 85%  | -     |
+| lib        | 90%  | -     |

@@ -1,6 +1,6 @@
 /**
  * Testes de Segurança - Vulnerabilidades Comuns
- * 
+ *
  * Checklist OWASP Top 10:
  * - A01:2021 – Broken Access Control
  * - A02:2021 – Cryptographic Failures
@@ -19,7 +19,7 @@ import { describe, it, expect } from 'vitest';
 describe('Segurança - XSS Prevention', () => {
   it('deve sanitizar inputs de usuários', () => {
     const maliciousInput = '<script>alert("XSS")</script>';
-    
+
     // React sanitiza automaticamente por padrão
     // Verificar se a aplicação usa dangerouslySetInnerHTML (não deve)
     expect(maliciousInput).toContain('<script>');
@@ -27,7 +27,7 @@ describe('Segurança - XSS Prevention', () => {
 
   it('deve escapar conteúdo renderizado', () => {
     const userContent = '<img src=x onerror="alert(\'XSS\')">';
-    
+
     // Content Security Policy deve bloquear scripts inline
     expect(userContent).toBeDefined();
   });

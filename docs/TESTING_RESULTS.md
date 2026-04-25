@@ -8,103 +8,126 @@ Sucesso: 100%
 ## Estrutura de Testes por Arquitetura
 
 ### 1. Testes de Arquitetura Geral (26 testes)
+
 **Arquivo**: `tests/unit/architecture.test.ts`
 
 #### Utilitarios e Helpers (4 testes)
+
 - Validacao de operacoes aritmeticas basicas
 - Tratamento de strings
 - Operacoes com objetos
 - Operacoes com arrays
 
 #### Constantes e Configuracao (2 testes)
+
 - Validacao de constantes da aplicacao
 - Validacao de feature flags
 
 #### Tipos e Interfaces (2 testes)
+
 - Validacao de type guards
 - Validacao de interfaces de objetos
 
 #### Hooks React (2 testes)
+
 - Convencao de nomenclatura de hooks
 - Gerenciamento de estado em hooks
 
 #### Rotas de API (2 testes)
+
 - Estrutura de rotas API
 - Validacao de codigos HTTP
 
 #### Componentes UI (2 testes)
+
 - Convencao de nomenclatura de componentes
 - Padrao de props de componentes
 
 #### Logica de Negocio (3 testes)
+
 - Fluxo de autenticacao
 - Transformacao de dados
 - Tratamento de erros
 
 #### Performance (2 testes)
+
 - Padrao de debounce
 - Padrao de memoizacao
 
 #### Seguranca (3 testes)
+
 - Validacao de formato de email
 - Validacao de forca de senha
 - Prevencao de XSS
 
 #### Banco de Dados (2 testes)
+
 - Operacoes CRUD
 - Query builders
 
 #### Integracao (2 testes)
+
 - Padrao de event emitter
 - Padrao de middleware
 
 ---
 
 ### 2. Testes de Rotas de API (22 testes)
+
 **Arquivo**: `tests/unit/api-routes.test.ts`
 
 #### Autenticacao (3 testes)
+
 - Validacao de estrutura de login
 - Validacao de resposta de login
 - Validacao de signup
 
 #### Times/Teams (4 testes)
+
 - Criacao de time
 - Listagem de times
 - Detalhes do time
 - Adicionar membro ao time
 
 #### Chat e Geracao de Ideias (2 testes)
+
 - Validacao de mensagens de chat
 - Validacao de geracao de ideias
 
 #### Templates (2 testes)
+
 - Listagem de templates
 - Detalhes de template
 
 #### Perfil de Usuario (2 testes)
+
 - Recuperacao de perfil
 - Atualizacao de perfil
 
 #### Exportacao (2 testes)
+
 - Validacao de requisicao de exportacao
 - Geracao de arquivo de exportacao
 
 #### Tratamento de Erros (3 testes)
+
 - Padronizacao de respostas de erro
 - Tratamento de erros de autenticacao
 - Tratamento de erros 404
 
 #### Rate Limiting e Seguranca (2 testes)
+
 - Rastreamento de taxa de requisicoes
 - Validacao de chaves de API
 
 ---
 
 ### 3. Testes de Componentes e Hooks (27 testes)
+
 **Arquivo**: `tests/unit/components-hooks.test.ts`
 
 #### Componentes Basicos de UI (9 testes)
+
 - Button (variants, sizes, states)
 - Card (structure, variants)
 - Input (types, states)
@@ -112,11 +135,13 @@ Sucesso: 100%
 - Avatar (initials, fallback)
 
 #### React Hooks (3 testes)
+
 - Hook useIdeas
 - Convencoes de nomenclatura
 - Operacoes assincrnas
 
 #### Paginas (5 testes)
+
 - Dashboard Page
 - Login Page
 - Signup Page
@@ -124,14 +149,17 @@ Sucesso: 100%
 - Teams Page
 
 #### Componentes de Layout (3 testes)
+
 - Navbar
 - Footer
 - Header
 
 #### Componentes de Formulario (1 teste)
+
 - IdeaForm
 
 #### Acessibilidade de Componentes (3 testes)
+
 - Labels ARIA
 - Navegacao por teclado
 - Contraste de cores
@@ -139,9 +167,11 @@ Sucesso: 100%
 ---
 
 ### 4. Testes de Banco de Dados e Autenticacao (28 testes)
+
 **Arquivo**: `tests/unit/database-auth.test.ts`
 
 #### Tabelas do Banco de Dados (11 testes)
+
 - Users Table
 - Sessions
 - Ideas Table
@@ -155,27 +185,33 @@ Sucesso: 100%
 - Migrations
 
 #### JWT e Tokens (2 testes)
+
 - Validacao de estrutura JWT
 - Verificacao de expiracao de token
 
 #### Provedores OAuth (2 testes)
+
 - Google OAuth
 - GitHub OAuth
 
 #### Permissoes e Controle de Acesso (3 testes)
+
 - Hierarquia de papeis
 - Verificacao de permissoes
 - Validacao de propriedade de recurso
 
 #### Gerenciamento de Sessoes (2 testes)
+
 - Criacao de sessoes
 - Invalidacao de sessoes
 
 #### Seguranca de Senha (2 testes)
+
 - Validacao de requisitos de senha
 - Hash de senhas
 
 #### Autenticacao de Dois Fatores (2 testes)
+
 - Geracao de segredo TOTP
 - Validacao de codigos TOTP
 
@@ -202,6 +238,7 @@ TOTAL:              103 testes
 ## Arquitetura Testada
 
 ### Frontend (React/Next.js)
+
 ✅ Componentes UI (Button, Card, Input, Badge, Avatar)
 ✅ Hooks customizados (useIdeas)
 ✅ Paginas (Dashboard, Auth, Teams, Templates)
@@ -209,6 +246,7 @@ TOTAL:              103 testes
 ✅ Acessibilidade (ARIA labels, keyboard navigation)
 
 ### Backend (API Routes)
+
 ✅ Autenticacao (login, signup, logout)
 ✅ Teams (create, read, update, delete, members)
 ✅ Chat e Geracao de Ideias
@@ -217,6 +255,7 @@ TOTAL:              103 testes
 ✅ Tratamento de erros
 
 ### Banco de Dados (Supabase)
+
 ✅ Schema de tabelas (Users, Ideas, Teams, Templates, Conversations)
 ✅ Relacionamentos (1-N, N-N)
 ✅ Operacoes CRUD
@@ -224,6 +263,7 @@ TOTAL:              103 testes
 ✅ Queries
 
 ### Seguranca e Autenticacao
+
 ✅ JWT tokens
 ✅ OAuth (Google, GitHub)
 ✅ Controle de acesso baseado em papeis (RBAC)
@@ -234,6 +274,7 @@ TOTAL:              103 testes
 ✅ Email validation
 
 ### Performance
+
 ✅ Debounce pattern
 ✅ Memoization pattern
 

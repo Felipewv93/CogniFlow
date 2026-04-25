@@ -94,16 +94,19 @@ npm run test:unit
 Após instalar as dependências, você pode:
 
 1. Executar os testes:
+
    ```bash
    npm test
    ```
 
 2. Ver cobertura de código:
+
    ```bash
    npm run test:coverage
    ```
 
 3. Rodar testes E2E com UI:
+
    ```bash
    npm run test:e2e:ui
    ```
@@ -129,23 +132,27 @@ npm run test:unit
 ## Troubleshooting
 
 ### Vitest não encontrado
+
 ```bash
 npm install --save-dev vitest
 ```
 
 ### Playwright browsers não instalados
+
 ```bash
 npx playwright install
 npx playwright install-deps
 ```
 
 ### Problemas de TypeScript
+
 ```bash
 npm install --save-dev typescript ts-node
 npx tsc --init
 ```
 
 ### Limpar cache
+
 ```bash
 rm -rf node_modules/.vitest
 rm -rf .next

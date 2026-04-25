@@ -43,8 +43,7 @@ export function Features() {
       <div className="container-padding mx-auto max-w-7xl">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
-            Tudo que você precisa para{' '}
-            <span className="gradient-text">criar sem limites</span>
+            Tudo que você precisa para <span className="gradient-text">criar sem limites</span>
           </h2>
           <p className="text-lg text-muted-foreground">
             Ferramentas poderosas para transformar suas ideias em realidade
@@ -60,7 +59,7 @@ export function Features() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card className="h-full transition-all hover:shadow-lg hover:border-cyber-cyan/50">
+              <Card className="h-full transition-all hover:border-cyber-cyan/50 hover:shadow-lg">
                 <CardHeader>
                   <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-cyber-blue to-cyber-cyan">
                     <feature.icon className="h-6 w-6 text-white" />

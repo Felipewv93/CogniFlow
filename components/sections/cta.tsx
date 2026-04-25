@@ -24,9 +24,9 @@ export function CTA() {
               </Link>
             </Button>
           </div>
-          
+
           {/* Decorative elements */}
-          <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute right-0 top-0 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
         </div>
       </div>

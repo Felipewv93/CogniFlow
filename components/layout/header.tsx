@@ -18,11 +18,11 @@ export function Header() {
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cyber-blue to-cyber-cyan">
             <Sparkles className="h-6 w-6 text-white" />
           </div>
-          <span className="text-xl font-bold gradient-text">Cogniflow</span>
+          <span className="gradient-text text-xl font-bold">Cogniflow</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden items-center space-x-6 md:flex">
           <Link
             href={ROUTES.TEMPLATES}
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -45,7 +45,7 @@ export function Header() {
 
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden items-center space-x-2 md:flex">
             <Button variant="ghost" asChild>
               <Link href={ROUTES.AUTH.LOGIN}>Entrar</Link>
             </Button>
@@ -69,11 +69,11 @@ export function Header() {
       {/* Mobile Navigation */}
       <div
         className={cn(
-          'md:hidden border-t transition-all duration-300',
-          mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+          'border-t transition-all duration-300 md:hidden',
+          mobileMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 overflow-hidden opacity-0'
         )}
       >
-        <nav className="container-padding py-4 flex flex-col space-y-3">
+        <nav className="container-padding flex flex-col space-y-3 py-4">
           <Link
             href={ROUTES.TEMPLATES}
             className="text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -92,7 +92,7 @@ export function Header() {
           >
             Assistente IA
           </Link>
-          <div className="pt-2 flex flex-col space-y-2">
+          <div className="flex flex-col space-y-2 pt-2">
             <Button variant="ghost" asChild className="w-full">
               <Link href={ROUTES.AUTH.LOGIN}>Entrar</Link>
             </Button>

@@ -43,10 +43,7 @@ export async function POST(request: Request) {
     });
 
     if (signInError) {
-      return NextResponse.json(
-        { error: 'Senha atual incorreta' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Senha atual incorreta' }, { status: 401 });
     }
 
     // Atualizar senha
@@ -56,10 +53,7 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Erro ao atualizar senha:', updateError);
-      return NextResponse.json(
-        { error: 'Erro ao atualizar senha' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Erro ao atualizar senha' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -67,9 +61,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Erro no POST /api/change-password:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
   }
 }

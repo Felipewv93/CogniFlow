@@ -3,6 +3,7 @@
 ## Problema
 
 Os arquivos de teste têm erros porque as dependências não estão instaladas:
+
 ```
 Cannot find module 'vitest'
 Cannot find module '@testing-library/react'
@@ -50,32 +51,42 @@ npm run test:e2e:ui
 ## Erros Comuns e Soluções
 
 ### Erro: "Cannot find module 'vitest'"
+
 Solução:
+
 ```bash
 npm install --save-dev vitest @vitest/ui
 ```
 
 ### Erro: "Cannot find module '@testing-library/react'"
+
 Solução:
+
 ```bash
 npm install --save-dev @testing-library/react @testing-library/jest-dom
 ```
 
 ### Erro: "Cannot find module '@playwright/test'"
+
 Solução:
+
 ```bash
 npm install --save-dev @playwright/test
 npx playwright install
 ```
 
 ### Erro: "jsdom is not defined"
+
 Solução:
+
 ```bash
 npm install --save-dev jsdom
 ```
 
 ### Erro: "Type errors in test files"
+
 Solução:
+
 ```bash
 npm install --save-dev @types/jest @types/node typescript
 ```
@@ -83,6 +94,7 @@ npm install --save-dev @types/jest @types/node typescript
 ## O que Fazer Agora
 
 ### Passo 1: Instalar Dependências
+
 ```bash
 # Recomendado: usar o script
 bash tests/install-dependencies.sh
@@ -91,11 +103,13 @@ bash tests/install-dependencies.sh
 ```
 
 ### Passo 2: Verificar Instalação
+
 ```bash
 npm run test:unit 2>&1 | head -20
 ```
 
 ### Passo 3: Explorar os Testes
+
 ```bash
 # Ver testes disponíveis
 ls -la tests/unit/
@@ -186,12 +200,14 @@ npm run test:unit
 ## Se Ainda Tiver Problemas
 
 1. Verifique Node.js versão:
+
    ```bash
    node --version  # Deve ser 18+
    npm --version   # Deve ser 8+
    ```
 
 2. Limpe tudo:
+
    ```bash
    npm cache clean --force
    rm -rf node_modules package-lock.json
@@ -199,6 +215,7 @@ npm run test:unit
    ```
 
 3. Verifique se está no diretório correto:
+
    ```bash
    pwd  # Deve terminar em /CogniFlow
    ```
@@ -213,6 +230,7 @@ npm run test:unit
 Depois de seguir esses passos, os erros devem desaparecer!
 
 Para mais detalhes, veja:
+
 - `docs/TESTING.md` - Documentação completa
 - `docs/TESTING_INSTALL.md` - Guia de instalação detalhado
 - `docs/TESTING_ARCHITECTURE.md` - Arquitetura dos testes

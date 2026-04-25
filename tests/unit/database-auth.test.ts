@@ -435,11 +435,13 @@ describe('Authentication & Authorization', () => {
   describe('Password Security', () => {
     it('should validate password requirements', () => {
       const isValidPassword = (password: string): boolean => {
-        return password.length >= 8 &&
-               /[A-Z]/.test(password) &&
-               /[a-z]/.test(password) &&
-               /[0-9]/.test(password) &&
-               /[!@#$%^&*]/.test(password);
+        return (
+          password.length >= 8 &&
+          /[A-Z]/.test(password) &&
+          /[a-z]/.test(password) &&
+          /[0-9]/.test(password) &&
+          /[!@#$%^&*]/.test(password)
+        );
       };
 
       expect(isValidPassword('Weak123')).toBe(false);

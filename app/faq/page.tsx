@@ -113,13 +113,15 @@ export default function FAQPage() {
               Voltar
             </Button>
           </Link>
-          <div className="flex items-center gap-3 mb-4">
+          <div className="mb-4 flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyber-blue to-cyber-cyan">
               <HelpCircle className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-4xl font-bold">Perguntas Frequentes</h1>
-              <p className="text-muted-foreground">Encontre respostas para as dúvidas mais comuns</p>
+              <p className="text-muted-foreground">
+                Encontre respostas para as dúvidas mais comuns
+              </p>
             </div>
           </div>
         </div>
@@ -130,15 +132,15 @@ export default function FAQPage() {
         <div className="space-y-12">
           {faqs.map((category, categoryIndex) => (
             <section key={categoryIndex}>
-              <h2 className="text-2xl font-bold mb-6 gradient-text">{category.category}</h2>
+              <h2 className="gradient-text mb-6 text-2xl font-bold">{category.category}</h2>
               <div className="space-y-4">
                 {category.questions.map((faq, faqIndex) => (
                   <Card key={faqIndex} className="p-6">
-                    <h3 className="text-lg font-semibold mb-3 flex items-start gap-2">
-                      <ChevronDown className="h-5 w-5 text-primary mt-0.5" />
+                    <h3 className="mb-3 flex items-start gap-2 text-lg font-semibold">
+                      <ChevronDown className="mt-0.5 h-5 w-5 text-primary" />
                       {faq.q}
                     </h3>
-                    <p className="text-muted-foreground ml-7">{faq.a}</p>
+                    <p className="ml-7 text-muted-foreground">{faq.a}</p>
                   </Card>
                 ))}
               </div>
@@ -147,12 +149,12 @@ export default function FAQPage() {
         </div>
 
         {/* Still have questions */}
-        <Card className="p-8 text-center mt-12">
-          <h2 className="text-2xl font-bold mb-4">Não encontrou sua resposta?</h2>
-          <p className="text-muted-foreground mb-6">
+        <Card className="mt-12 p-8 text-center">
+          <h2 className="mb-4 text-2xl font-bold">Não encontrou sua resposta?</h2>
+          <p className="mb-6 text-muted-foreground">
             Entre em contato conosco ou consulte a documentação completa.
           </p>
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap justify-center gap-4">
             <Link href="/docs">
               <Button>Ver Documentação</Button>
             </Link>

@@ -33,7 +33,8 @@ export const metadata: Metadata = {
   // Use uma query param de versão para forçar re-fetch em caches de redes sociais
   openGraph: {
     title: 'Cogniflow - Inteligência Criativa',
-    description: 'Transforme suas ideias em realidade com IA. Gere prompts, templates e estruture conceitos criativos.',
+    description:
+      'Transforme suas ideias em realidade com IA. Gere prompts, templates e estruture conceitos criativos.',
     url: siteUrl,
     siteName: 'Cogniflow',
     images: [
@@ -50,7 +51,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Cogniflow - Inteligência Criativa',
-    description: 'Transforme suas ideias em realidade com IA. Gere prompts, templates e estruture conceitos criativos.',
+    description:
+      'Transforme suas ideias em realidade com IA. Gere prompts, templates e estruture conceitos criativos.',
     images: [`/images/og-image.png?v=5`],
     creator: '@cogniflow',
   },
@@ -90,11 +92,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
       <head>
@@ -108,9 +106,7 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('min-h-screen antialiased', inter.variable, inter.className)}>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

@@ -18,10 +18,10 @@ export function Footer() {
                   alt="CogniFlow Logo"
                   width={32}
                   height={32}
-                  className="object-cover rounded-full"
+                  className="rounded-full object-cover"
                 />
               </div>
-              <span className="text-lg font-bold gradient-text">CogniFlow</span>
+              <span className="gradient-text text-lg font-bold">CogniFlow</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               Desbloqueie sua criatividade oculta com inteligência artificial.
@@ -74,7 +74,10 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={ROUTES.DASHBOARD} className="text-sm text-muted-foreground hover:text-foreground">
+                <Link
+                  href={ROUTES.DASHBOARD}
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
                   Dashboard
                 </Link>
               </li>
@@ -86,7 +89,10 @@ export function Footer() {
             <h3 className="mb-4 text-sm font-semibold">Legal</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
+                <Link
+                  href="/privacy"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
                   Privacidade
                 </Link>
               </li>

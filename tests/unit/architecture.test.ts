@@ -22,7 +22,7 @@ describe('Unit Tests - Architecture Components', () => {
       const arr = [1, 2, 3, 4, 5];
       expect(arr).toHaveLength(5);
       expect(arr).toContain(3);
-      expect(arr.filter(n => n > 2)).toEqual([3, 4, 5]);
+      expect(arr.filter((n) => n > 2)).toEqual([3, 4, 5]);
     });
   });
 
@@ -46,7 +46,7 @@ describe('Unit Tests - Architecture Components', () => {
       };
 
       expect(features.authEnabled).toBe(true);
-      Object.values(features).forEach(feature => {
+      Object.values(features).forEach((feature) => {
         expect(typeof feature).toBe('boolean');
       });
     });
@@ -92,7 +92,7 @@ describe('Unit Tests - Architecture Components', () => {
 
     it('should validate hook state management pattern', () => {
       const mockState = { ideas: [], loading: false, error: null };
-      
+
       expect(mockState).toHaveProperty('ideas');
       expect(mockState).toHaveProperty('loading');
       expect(mockState).toHaveProperty('error');
@@ -139,8 +139,8 @@ describe('Unit Tests - Architecture Components', () => {
   describe('Components - UI Component Pattern', () => {
     it('should validate component naming convention', () => {
       const componentNames = ['Button', 'Card', 'Input', 'Badge', 'Avatar'];
-      
-      componentNames.forEach(name => {
+
+      componentNames.forEach((name) => {
         expect(name).toMatch(/^[A-Z]/);
       });
     });
@@ -221,7 +221,7 @@ describe('Unit Tests - Architecture Components', () => {
       };
 
       const debouncedFn = debounce(() => callCount++, 100);
-      
+
       debouncedFn();
       debouncedFn();
       debouncedFn();
@@ -273,10 +273,12 @@ describe('Unit Tests - Architecture Components', () => {
 
     it('should validate password strength', () => {
       const isStrongPassword = (password: string): boolean => {
-        return password.length >= 8 &&
-               /[A-Z]/.test(password) &&
-               /[a-z]/.test(password) &&
-               /[0-9]/.test(password);
+        return (
+          password.length >= 8 &&
+          /[A-Z]/.test(password) &&
+          /[a-z]/.test(password) &&
+          /[0-9]/.test(password)
+        );
       };
 
       expect(isStrongPassword('WeakPass')).toBe(false);
@@ -292,7 +294,7 @@ describe('Unit Tests - Architecture Components', () => {
 
       const malicious = '<div>Safe</div><script>alert("XSS")</script>';
       const sanitized = sanitizeHtml(malicious);
-      
+
       expect(sanitized).not.toContain('<script>');
     });
   });
@@ -336,7 +338,8 @@ describe('Unit Tests - Architecture Components', () => {
         build: () => 'SELECT * FROM table WHERE id = ? ORDER BY created_at LIMIT 10',
       };
 
-      const query = qb.select(['id', 'name'])
+      const query = qb
+        .select(['id', 'name'])
         .where('active = true')
         .orderBy('created_at')
         .limit(10)

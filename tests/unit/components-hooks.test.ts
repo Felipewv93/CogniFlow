@@ -3,9 +3,24 @@ import { describe, it, expect } from 'vitest';
 describe('React Components - UI Elements', () => {
   describe('Button Component', () => {
     it('should have valid button variants', () => {
-      type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' | 'cyber';
+      type ButtonVariant =
+        | 'default'
+        | 'destructive'
+        | 'outline'
+        | 'secondary'
+        | 'ghost'
+        | 'link'
+        | 'cyber';
 
-      const validVariants: ButtonVariant[] = ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link', 'cyber'];
+      const validVariants: ButtonVariant[] = [
+        'default',
+        'destructive',
+        'outline',
+        'secondary',
+        'ghost',
+        'link',
+        'cyber',
+      ];
 
       expect(validVariants).toHaveLength(7);
       expect(validVariants).toContain('cyber');
@@ -97,9 +112,22 @@ describe('React Components - UI Elements', () => {
 
   describe('Badge Component', () => {
     it('should support badge variants', () => {
-      type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning';
+      type BadgeVariant =
+        | 'default'
+        | 'secondary'
+        | 'destructive'
+        | 'outline'
+        | 'success'
+        | 'warning';
 
-      const variants: BadgeVariant[] = ['default', 'secondary', 'destructive', 'outline', 'success', 'warning'];
+      const variants: BadgeVariant[] = [
+        'default',
+        'secondary',
+        'destructive',
+        'outline',
+        'success',
+        'warning',
+      ];
 
       expect(variants).toContain('success');
       expect(variants).toContain('warning');
@@ -109,7 +137,11 @@ describe('React Components - UI Elements', () => {
   describe('Avatar Component', () => {
     it('should display avatar with initials', () => {
       const getInitials = (name: string): string => {
-        return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        return name
+          .split(' ')
+          .map((n) => n[0])
+          .join('')
+          .toUpperCase();
       };
 
       expect(getInitials('John Doe')).toBe('JD');
@@ -161,7 +193,7 @@ describe('React Hooks', () => {
     it('should follow hook naming convention', () => {
       const hookNames = ['useIdeas', 'useAuth', 'useChat', 'useTheme', 'useTeams'];
 
-      hookNames.forEach(name => {
+      hookNames.forEach((name) => {
         expect(name).toMatch(/^use[A-Z]/);
       });
     });
@@ -389,9 +421,7 @@ describe('Form Components', () => {
         message: string;
       }
 
-      const errors: FormError[] = [
-        { field: 'title', message: 'Title is required' },
-      ];
+      const errors: FormError[] = [{ field: 'title', message: 'Title is required' }];
 
       expect(errors[0].field).toBe('title');
       expect(errors[0].message).toContain('required');

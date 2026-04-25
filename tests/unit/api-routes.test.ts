@@ -53,9 +53,7 @@ describe('API Routes - Authentication', () => {
       }
 
       const isValidSignup = (data: SignupRequest): boolean => {
-        return data.email.includes('@') &&
-               data.password.length >= 8 &&
-               data.name.length >= 2;
+        return data.email.includes('@') && data.password.length >= 8 && data.name.length >= 2;
       };
 
       const validRequest: SignupRequest = {
@@ -263,7 +261,7 @@ describe('API Routes - Templates', () => {
         },
       ];
 
-      expect(templates.every(t => t.id && t.name)).toBe(true);
+      expect(templates.every((t) => t.id && t.name)).toBe(true);
     });
   });
 

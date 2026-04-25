@@ -27,10 +27,7 @@ export async function GET() {
       .single();
 
     if (profileError) {
-      return NextResponse.json(
-        { error: 'Erro ao buscar perfil' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Erro ao buscar perfil' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -56,10 +53,7 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Erro no GET /api/profile:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
   }
 }
 
@@ -80,15 +74,7 @@ export async function PUT(request: Request) {
     const user = session.user;
 
     const body = await request.json();
-    const {
-      full_name,
-      bio,
-      company,
-      role,
-      avatar_url,
-      theme,
-      notification_preferences,
-    } = body;
+    const { full_name, bio, company, role, avatar_url, theme, notification_preferences } = body;
 
     // Preparar dados para atualização (apenas campos permitidos)
     const updateData: any = {};
@@ -110,10 +96,7 @@ export async function PUT(request: Request) {
 
     if (error) {
       console.error('Erro ao atualizar perfil:', error);
-      return NextResponse.json(
-        { error: 'Erro ao atualizar perfil' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Erro ao atualizar perfil' }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -122,9 +105,6 @@ export async function PUT(request: Request) {
     });
   } catch (error) {
     console.error('Erro no PUT /api/profile:', error);
-    return NextResponse.json(
-      { error: 'Erro interno do servidor' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 });
   }
 }
