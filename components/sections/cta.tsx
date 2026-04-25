@@ -9,7 +9,7 @@ export function CTA() {
   return (
     <section className="section-spacing">
       <div className="container-padding mx-auto max-w-7xl">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-cyber-blue via-cyber-cyan to-cyber-neon p-12 text-center">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 p-12 text-center">
           <div className="relative z-10">
             <h2 className="mb-4 text-3xl font-bold text-white sm:text-4xl">
               Pronto para Desbloquear Sua Criatividade?
