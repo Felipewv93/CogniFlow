@@ -27,7 +27,7 @@ const templateExamples = [
 
 export function Templates() {
   return (
-    <section className="section-spacing bg-muted/30">
+    <section className="section-spacing">
       <div className="container-padding mx-auto max-w-7xl">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
@@ -42,17 +42,17 @@ export function Templates() {
           {templateExamples.map((template) => (
             <Card
               key={template.title}
-              className="transition hover:border-cyber-cyan/50 hover:shadow-lg"
+              className="relative group border-cyan-500/20 bg-black/50 backdrop-blur-md transition-all duration-300 hover:border-cyan-400/50 hover:bg-black/70 hover:shadow-lg hover:shadow-cyan-500/30"
             >
               <CardHeader>
-                <Badge className="mb-2 w-fit">{template.category}</Badge>
+                <Badge className="mb-2 w-fit bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600">{template.category}</Badge>
                 <CardTitle className="text-xl">{template.title}</CardTitle>
                 <CardDescription>{template.description}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
                   {template.tags.map((tag) => (
-                    <span key={tag} className="rounded-full bg-secondary px-2 py-1 text-xs">
+                    <span key={tag} className="rounded-full bg-cyan-500/20 px-2 py-1 text-xs text-cyan-300 border border-cyan-500/30">
                       {tag}
                     </span>
                   ))}
@@ -63,7 +63,7 @@ export function Templates() {
         </div>
 
         <div className="text-center">
-          <Button size="lg" variant="outline" asChild>
+          <Button size="lg" className="bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 text-white hover:opacity-90" asChild>
             <Link href={ROUTES.TEMPLATES}>Ver Todos os Templates</Link>
           </Button>
         </div>
