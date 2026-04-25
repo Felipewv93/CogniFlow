@@ -1,0 +1,262 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # Job 1: Lint & Type Checking
+  lint-and-types:
+    runs-on: ubuntu-latest
+    name: Lint & Type Checking
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check TypeScript types
+        run: pnpm run type-check
+
+      - name: Run ESLint
+        run: pnpm run lint
+
+      - name: Check formatting with Prettier
+        run: pnpm run format:check
+
+  # Job 2: Unit & Integration Tests
+  test:
+    runs-on: ubuntu-latest
+    name: Unit & Integration Tests
+    needs: lint-and-types
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run unit tests
+        run: pnpm run test:unit
+
+      - name: Generate coverage report
+        run: pnpm run test:coverage
+
+      - name: Check coverage artifact
+        id: coverage_file
+        run: |
+          if [ -s coverage/lcov.info ]; then
+            echo "has_lcov=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_lcov=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping Codecov upload because coverage/lcov.info is missing or empty."
+          fi
+        shell: bash
+
+      - name: Upload coverage to Codecov
+        if: steps.coverage_file.outputs.has_lcov == 'true'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/lcov.info
+          flags: unittests
+          name: codecov-umbrella
+
+  # Job 3: Security Scanning
+  security:
+    runs-on: ubuntu-latest
+    name: Security & Vulnerability Scan
+    needs: lint-and-types
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run npm audit
+        run: pnpm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Run security tests
+        run: pnpm run test:security
+        continue-on-error: true
+
+  # Job 4: Build
+  build:
+    runs-on: ubuntu-latest
+    name: Build Next.js
+    needs: [lint-and-types, test]
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key
+      SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-role-key
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm run build
+
+      - name: Check bundle size
+        run: pnpm run test:bundle
+        continue-on-error: true
+
+  # Job 5: E2E Tests (opcional, só em PRs e main)
+  e2e:
+    runs-on: ubuntu-latest
+    name: E2E Tests
+    needs: build
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run E2E tests
+        run: pnpm run test:e2e
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+  # Job 6: Performance & Accessibility
+  quality:
+    runs-on: ubuntu-latest
+    name: Performance & Accessibility
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8.15.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run accessibility tests
+        run: pnpm run test:a11y
+        continue-on-error: true
+
+  # Job 7: Summary
+  summary:
+    runs-on: ubuntu-latest
+    name: Test Summary
+    needs: [lint-and-types, test, security, build, e2e, quality]
+    if: always()
+
+    steps:
+      - name: Check if all tests passed
+        run: |
+          echo "lint-and-types: ${{ needs.lint-and-types.result }}"
+          echo "test: ${{ needs.test.result }}"
+          echo "security: ${{ needs.security.result }}"
+          echo "build: ${{ needs.build.result }}"
+          echo "e2e: ${{ needs.e2e.result }}"
+          echo "quality: ${{ needs.quality.result }}"
+
+          if [ "${{ needs.lint-and-types.result }}" = "failure" ] || \
+             [ "${{ needs.test.result }}" = "failure" ] || \
+             [ "${{ needs.security.result }}" = "failure" ] || \
+             [ "${{ needs.build.result }}" = "failure" ]; then
+            echo "❌ Some checks failed"
+            exit 1
+          fi
+          echo "✅ All critical checks passed!"
+        shell: bash
+
+  # Notification (opcional)
+  notify:
+    runs-on: ubuntu-latest
+    name: Notify Status
+    needs: summary
+    if: always()
+
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1
+        if: failure()
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "CogniFlow CI/CD Pipeline Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Workflow:* ${{ github.workflow }}\n*Status:* Failed ❌\n*Branch:* ${{ github.ref }}\n*Commit:* ${{ github.sha }}"
+                  }
+                }
+              ]
+            }

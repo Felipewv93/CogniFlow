@@ -8,9 +8,9 @@ import { ROUTES } from '@/utils/constants';
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden section-spacing cyber-grid">
+    <section className="section-spacing cyber-grid relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-cyber-blue/5 via-transparent to-transparent" />
-      
+
       <div className="container-padding relative mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,8 +34,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mb-6 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            Desbloqueie Sua{' '}
-            <span className="gradient-text">Criatividade Oculta</span>
+            Desbloqueie Sua <span className="gradient-text">Criatividade Oculta</span>
           </motion.h1>
 
           <motion.p
@@ -44,15 +43,15 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mb-8 text-lg text-muted-foreground sm:text-xl"
           >
-            Plataforma SaaS de inteligência criativa que ajuda você a estruturar ideias,
-            gerar prompts e conectar conceitos para ferramentas como Lovable, Notion e Figma.
+            Plataforma SaaS de inteligência criativa que ajuda você a estruturar ideias, gerar
+            prompts e conectar conceitos para ferramentas como Lovable, Notion e Figma.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            className="flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
             <Button size="lg" variant="cyber" asChild className="group">
               <Link href={ROUTES.AUTH.SIGNUP}>
@@ -69,7 +68,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.6 }}
-            className="mt-12 text-sm text-muted-foreground flex flex-wrap items-center justify-center gap-3"
+            className="mt-12 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground"
           >
             <span className="flex items-center gap-1">
               <Gift className="h-4 w-4" />
@@ -89,7 +88,7 @@ export function Hero() {
         </motion.div>
 
         {/* Decorative elements */}
-        <div className="absolute top-1/4 left-10 h-72 w-72 rounded-full bg-cyber-blue/10 blur-3xl" />
+        <div className="absolute left-10 top-1/4 h-72 w-72 rounded-full bg-cyber-blue/10 blur-3xl" />
         <div className="absolute bottom-1/4 right-10 h-72 w-72 rounded-full bg-cyber-cyan/10 blur-3xl" />
       </div>
     </section>

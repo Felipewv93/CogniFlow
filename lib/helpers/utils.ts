@@ -32,7 +32,7 @@ export function formatRelativeTime(date: string | Date): string {
   if (diffInSeconds < 3600) return `há ${Math.floor(diffInSeconds / 60)} minutos`;
   if (diffInSeconds < 86400) return `há ${Math.floor(diffInSeconds / 3600)} horas`;
   if (diffInSeconds < 604800) return `há ${Math.floor(diffInSeconds / 86400)} dias`;
-  
+
   return formatDate(d);
 }
 
@@ -80,7 +80,7 @@ export function getAvatarColor(seed: string): string {
     'bg-indigo-500',
     'bg-cyan-500',
   ];
-  
+
   const index = seed.charCodeAt(0) % colors.length;
   return colors[index];
 }
@@ -105,7 +105,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), wait);

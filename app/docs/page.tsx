@@ -84,7 +84,7 @@ export default function DocsPage() {
               Voltar
             </Button>
           </Link>
-          <div className="flex items-center gap-3 mb-4">
+          <div className="mb-4 flex items-center gap-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyber-blue to-cyber-cyan">
               <BookOpen className="h-6 w-6 text-white" />
             </div>
@@ -100,11 +100,11 @@ export default function DocsPage() {
       <div className="container-padding mx-auto max-w-7xl py-12">
         {/* Quick Start */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-6">Guias Rápidos</h2>
+          <h2 className="mb-6 text-3xl font-bold">Guias Rápidos</h2>
           <div className="grid gap-6 md:grid-cols-2">
             {guides.map((guide, index) => (
               <Card key={index} className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{guide.title}</h3>
+                <h3 className="mb-2 text-xl font-semibold">{guide.title}</h3>
                 <p className="text-muted-foreground">{guide.description}</p>
               </Card>
             ))}
@@ -113,18 +113,18 @@ export default function DocsPage() {
 
         {/* Documentation Sections */}
         <section>
-          <h2 className="text-3xl font-bold mb-6">Documentação Completa</h2>
+          <h2 className="mb-6 text-3xl font-bold">Documentação Completa</h2>
           <div className="grid gap-8 md:grid-cols-2">
             {sections.map((section, index) => {
               const Icon = section.icon;
               return (
                 <Card key={index} className="p-6">
-                  <div className="flex items-start gap-4 mb-4">
+                  <div className="mb-4 flex items-start gap-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-1">{section.title}</h3>
+                      <h3 className="mb-1 text-xl font-semibold">{section.title}</h3>
                       <p className="text-sm text-muted-foreground">{section.description}</p>
                     </div>
                   </div>
@@ -133,7 +133,7 @@ export default function DocsPage() {
                       <li key={linkIndex}>
                         <Link
                           href={link.href}
-                          className="text-sm text-primary hover:underline flex items-center gap-2"
+                          className="flex items-center gap-2 text-sm text-primary hover:underline"
                         >
                           <FileText className="h-4 w-4" />
                           {link.title}
@@ -150,20 +150,20 @@ export default function DocsPage() {
         {/* FAQ Quick Links */}
         <section className="mt-16">
           <Card className="p-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Ainda tem dúvidas?</h2>
-            <p className="text-muted-foreground mb-6">
+            <h2 className="mb-4 text-2xl font-bold">Ainda tem dúvidas?</h2>
+            <p className="mb-6 text-muted-foreground">
               Confira nossa seção de perguntas frequentes ou entre em contato.
             </p>
-            <div className="flex flex-wrap gap-4 justify-center">
+            <div className="flex flex-wrap justify-center gap-4">
               <Link href="/faq">
-                <Button>
-                  Ver FAQ
-                </Button>
+                <Button>Ver FAQ</Button>
               </Link>
-              <a href="https://github.com/Ryanditko/Cogniflow/issues" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline">
-                  Reportar Issue
-                </Button>
+              <a
+                href="https://github.com/Ryanditko/Cogniflow/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline">Reportar Issue</Button>
               </a>
             </div>
           </Card>

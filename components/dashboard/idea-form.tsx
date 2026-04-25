@@ -30,7 +30,10 @@ export function IdeaForm({ onSubmit, onCancel, initialData }: IdeaFormProps) {
     try {
       await onSubmit({
         ...formData,
-        tags: formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean),
+        tags: formData.tags
+          .split(',')
+          .map((tag) => tag.trim())
+          .filter(Boolean),
         is_favorite: initialData?.is_favorite || false,
       });
       onCancel();
@@ -44,7 +47,7 @@ export function IdeaForm({ onSubmit, onCancel, initialData }: IdeaFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-2">Título *</label>
+        <label className="mb-2 block text-sm font-medium">Título *</label>
         <Input
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -54,11 +57,11 @@ export function IdeaForm({ onSubmit, onCancel, initialData }: IdeaFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">Categoria *</label>
+        <label className="mb-2 block text-sm font-medium">Categoria *</label>
         <select
           value={formData.category}
           onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-          className="w-full px-4 py-2 border rounded-lg bg-background"
+          className="w-full rounded-lg border bg-background px-4 py-2"
           required
         >
           {categories.map((cat) => (
@@ -70,7 +73,7 @@ export function IdeaForm({ onSubmit, onCancel, initialData }: IdeaFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">Descrição Curta</label>
+        <label className="mb-2 block text-sm font-medium">Descrição Curta</label>
         <Input
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -79,18 +82,18 @@ export function IdeaForm({ onSubmit, onCancel, initialData }: IdeaFormProps) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">Conteúdo *</label>
+        <label className="mb-2 block text-sm font-medium">Conteúdo *</label>
         <textarea
           value={formData.content}
           onChange={(e) => setFormData({ ...formData, content: e.target.value })}
           placeholder="Descreva sua ideia em detalhes..."
-          className="w-full px-4 py-2 border rounded-lg bg-background min-h-[150px]"
+          className="min-h-[150px] w-full rounded-lg border bg-background px-4 py-2"
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2">Tags</label>
+        <label className="mb-2 block text-sm font-medium">Tags</label>
         <Input
           value={formData.tags}
           onChange={(e) => setFormData({ ...formData, tags: e.target.value })}

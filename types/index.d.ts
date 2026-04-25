@@ -21,13 +21,7 @@ export interface Idea {
   updated_at: string;
 }
 
-export type IdeaCategory =
-  | 'startup'
-  | 'design'
-  | 'app-feature'
-  | 'content'
-  | 'marketing'
-  | 'other';
+export type IdeaCategory = 'startup' | 'design' | 'app-feature' | 'content' | 'marketing' | 'other';
 
 export interface Template {
   id: string;

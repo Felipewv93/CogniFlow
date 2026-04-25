@@ -14,7 +14,8 @@ const buttonVariants = cva(
         secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
-        cyber: 'bg-gradient-to-r from-cyber-blue to-cyber-cyan text-white hover:opacity-90 cyber-glow',
+        cyber:
+          'bg-gradient-to-r from-cyber-blue to-cyber-cyan text-white hover:opacity-90 cyber-glow',
       },
       size: {
         default: 'h-10 px-4 py-2',

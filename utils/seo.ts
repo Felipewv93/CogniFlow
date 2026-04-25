@@ -35,7 +35,7 @@ export function getPageSEO(page: {
   image?: string;
 }): SEOConfig {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cogniflow.app';
-  
+
   return {
     title: `${page.title} | Cogniflow`,
     description: page.description,
@@ -81,8 +81,5 @@ export const jsonLdOrganization = {
   description: 'Desbloqueie sua criatividade com inteligência artificial',
   url: process.env.NEXT_PUBLIC_SITE_URL,
   logo: `${process.env.NEXT_PUBLIC_SITE_URL}/images/logo.svg`,
-  sameAs: [
-    'https://twitter.com/cogniflow',
-    'https://github.com/felipewv93/cogniflow',
-  ],
+  sameAs: ['https://twitter.com/cogniflow', 'https://github.com/felipewv93/cogniflow'],
 };
