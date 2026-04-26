@@ -3,12 +3,19 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 let browserClient: SupabaseClient | null = null;
 let adminClient: SupabaseClient | null = null;
 
-function requireEnvVar(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`${name} is required.`);
+function requirePublicEnvVars() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is required.');
   }
-  return value;
+
+  if (!supabaseAnonKey) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_ANON_KEY is required.');
+  }
+
+  return { supabaseUrl, supabaseAnonKey };
 }
 
 export function getSupabaseClient(): SupabaseClient {
@@ -16,8 +23,7 @@ export function getSupabaseClient(): SupabaseClient {
     return browserClient;
   }
 
-  const supabaseUrl = requireEnvVar('NEXT_PUBLIC_SUPABASE_URL');
-  const supabaseAnonKey = requireEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  const { supabaseUrl, supabaseAnonKey } = requirePublicEnvVars();
 
   browserClient = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
@@ -35,8 +41,7 @@ export function getSupabaseAdminClient(): SupabaseClient {
     return adminClient;
   }
 
-  const supabaseUrl = requireEnvVar('NEXT_PUBLIC_SUPABASE_URL');
-  const supabaseAnonKey = requireEnvVar('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  const { supabaseUrl, supabaseAnonKey } = requirePublicEnvVars();
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || supabaseAnonKey;
 
   adminClient = createClient(supabaseUrl, serviceRoleKey, {
