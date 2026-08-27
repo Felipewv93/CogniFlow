@@ -146,10 +146,10 @@ jobs:
         run: pnpm run test:bundle
         continue-on-error: true
 
-  # Job 5: E2E Tests (opcional, só em PRs e main)
-  e2e:
+  # Job 5: Smoke Tests
+  smoke:
     runs-on: ubuntu-latest
-    name: E2E Tests
+    name: Smoke Tests
     needs: build
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/master'
 
@@ -171,9 +171,8 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
 
-      - name: Run E2E tests
-        run: pnpm run test:e2e
-        continue-on-error: true
+      - name: Run smoke tests
+        run: pnpm run test:smoke
 
       - name: Upload test results
         if: always()
@@ -211,7 +210,7 @@ jobs:
   summary:
     runs-on: ubuntu-latest
     name: Test Summary
-    needs: [lint-and-types, test, security, build, e2e, quality]
+    needs: [lint-and-types, test, security, build, smoke, quality]
     if: always()
 
     steps:
@@ -221,13 +220,14 @@ jobs:
           echo "test: ${{ needs.test.result }}"
           echo "security: ${{ needs.security.result }}"
           echo "build: ${{ needs.build.result }}"
-          echo "e2e: ${{ needs.e2e.result }}"
+          echo "smoke: ${{ needs.smoke.result }}"
           echo "quality: ${{ needs.quality.result }}"
 
           if [ "${{ needs.lint-and-types.result }}" = "failure" ] || \
              [ "${{ needs.test.result }}" = "failure" ] || \
              [ "${{ needs.security.result }}" = "failure" ] || \
-             [ "${{ needs.build.result }}" = "failure" ]; then
+             [ "${{ needs.build.result }}" = "failure" ] || \
+             [ "${{ needs.smoke.result }}" = "failure" ]; then
             echo "❌ Some checks failed"
             exit 1
           fi
