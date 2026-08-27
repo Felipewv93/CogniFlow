@@ -54,7 +54,7 @@ export function IdeaCard({ idea, onEdit, onDelete, onToggleFavorite }: IdeaCardP
         </div>
       </div>
 
-      <p className="mb-4 line-clamp-3 min-h-[4.5rem] text-sm text-muted-foreground">
+      <p className="mb-4 max-h-[4.5rem] overflow-hidden text-sm text-muted-foreground">
         {idea.description || 'Clique para visualizar os detalhes desta ideia.'}
       </p>
 
