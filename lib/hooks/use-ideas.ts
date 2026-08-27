@@ -69,20 +69,20 @@ export function useIdeas() {
     try {
       if (!user) throw new Error('Usuário não autenticado');
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('ideas')
         .update(updates)
-        .eq('id', id)
-        .eq('user_id', user.id)
-        .select()
-        .maybeSingle();
+        .eq('id', id);
 
       if (error) throw error;
-      if (!data) throw new Error('Ideia não encontrada ou sem permissão para editar');
 
-      setIdeas(ideas.map((idea) => (idea.id === id ? data : idea)));
+      setIdeas(
+        ideas.map((idea) =>
+          idea.id === id ? { ...idea, ...updates, updated_at: new Date().toISOString() } : idea
+        )
+      );
       toast.success('Ideia atualizada!');
-      return data;
+      return ideas.find((idea) => idea.id === id);
     } catch (error: any) {
       console.error('Erro ao atualizar ideia:', error);
       toast.error('Erro ao atualizar ideia');
