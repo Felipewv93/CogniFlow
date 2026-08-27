@@ -58,7 +58,7 @@ BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SET search_path = public;
 
 DROP TRIGGER IF EXISTS teams_updated_at ON public.teams;
 CREATE TRIGGER teams_updated_at
@@ -77,7 +77,14 @@ BEGIN
     WHERE team_id = team_uuid AND user_id = user_uuid
   );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- A função é usada pelas políticas RLS durante consultas autenticadas.
+-- Mantê-la inacessível para visitantes, mas disponível para authenticated.
+REVOKE EXECUTE ON FUNCTION public.is_team_member(uuid, uuid) FROM anon;
+REVOKE EXECUTE ON FUNCTION public.is_team_member(uuid, uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_team_member(uuid, uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_team_member(uuid, uuid) TO service_role;
 
 -- 5. HABILITAR RLS E REMOVER POLÍTICAS ANTIGAS
 -- ============================================
@@ -205,3 +212,9 @@ USING (
 -- INSTALAÇÃO COMPLETA!
 -- Agora acesse /teams no seu site
 -- ============================================
+
+-- Restringir execução pública/autenticada da função handle_new_user
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM anon;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.handle_new_user() TO service_role;

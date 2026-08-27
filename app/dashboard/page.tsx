@@ -58,7 +58,7 @@ export default function DashboardPage() {
         .from('profiles')
         .select('full_name')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
       if (profile?.full_name) {
         setProfileName(profile.full_name);

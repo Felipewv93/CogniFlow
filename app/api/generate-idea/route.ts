@@ -71,6 +71,24 @@ function isGeminiModelUnavailable(status: number, errorBody: any): boolean {
   );
 }
 
+function parseIdeasResponse(text: string): { ideas: any[] } | null {
+  const normalizedText = text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim();
+
+  const start = normalizedText.indexOf('{');
+  const end = normalizedText.lastIndexOf('}');
+  const jsonText = start >= 0 && end > start ? normalizedText.slice(start, end + 1) : normalizedText;
+
+  try {
+    return JSON.parse(jsonText);
+  } catch {
+    return null;
+  }
+}
+
 function buildQuotaFallbackIdeas(prompt: string, category?: string, tone?: string) {
   const safePrompt = prompt || 'sua ideia';
   const toneText = tone ? `Tom sugerido: ${tone}.` : 'Tom sugerido: claro e objetivo.';
@@ -467,7 +485,8 @@ Formato de resposta em JSON:
             ],
             generationConfig: {
               temperature: 0.8,
-              maxOutputTokens: 1200,
+              maxOutputTokens: 3000,
+              responseMimeType: 'application/json',
             },
           }),
         });
@@ -513,9 +532,12 @@ Formato de resposta em JSON:
       throw new Error('Gemini API response vazia');
     }
 
-    // Extrair JSON da resposta (pode vir com markdown)
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    const parsedIdeas = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(text);
+    // Aceita JSON puro e JSON envolvido em bloco Markdown.
+    const parsedIdeas = parseIdeasResponse(text);
+    if (!parsedIdeas) {
+      throw new Error('GEMINI_INVALID_RESPONSE');
+    }
+
     const generatedIdeas = Array.isArray(parsedIdeas?.ideas) ? parsedIdeas.ideas : [];
 
     if (!generatedIdeas.length) {
@@ -529,7 +551,15 @@ Formato de resposta em JSON:
       teamId,
     });
   } catch (error: any) {
-    console.error('Erro ao gerar ideias:', error);
+    const fallbackErrors = [
+      'GEMINI_QUOTA_EXCEEDED',
+      'GEMINI_MODEL_UNAVAILABLE',
+      'GEMINI_INVALID_RESPONSE',
+    ];
+
+    if (!fallbackErrors.includes(error?.message)) {
+      console.error('Erro ao gerar ideias:', error);
+    }
 
     if (error?.message === 'GEMINI_QUOTA_EXCEEDED') {
       return NextResponse.json({
@@ -540,6 +570,14 @@ Formato de resposta em JSON:
     }
 
     if (error?.message === 'GEMINI_MODEL_UNAVAILABLE') {
+      return NextResponse.json({
+        ideas: buildQuotaFallbackIdeas(prompt, category, tone),
+        teamId,
+        fallback: true,
+      });
+    }
+
+    if (error?.message === 'GEMINI_INVALID_RESPONSE') {
       return NextResponse.json({
         ideas: buildQuotaFallbackIdeas(prompt, category, tone),
         teamId,
