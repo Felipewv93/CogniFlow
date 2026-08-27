@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/supabase/client';
@@ -67,18 +67,22 @@ export function useIdeas() {
 
   const updateIdea = async (id: string, updates: Partial<Idea>) => {
     try {
-      const { data, error } = await supabase
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { error } = await supabase
         .from('ideas')
         .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
+        .eq('id', id);
 
       if (error) throw error;
 
-      setIdeas(ideas.map((idea) => (idea.id === id ? data : idea)));
+      setIdeas(
+        ideas.map((idea) =>
+          idea.id === id ? { ...idea, ...updates, updated_at: new Date().toISOString() } : idea
+        )
+      );
       toast.success('Ideia atualizada!');
-      return data;
+      return ideas.find((idea) => idea.id === id);
     } catch (error: any) {
       console.error('Erro ao atualizar ideia:', error);
       toast.error('Erro ao atualizar ideia');
