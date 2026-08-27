@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { Navbar } from '@/components/layout/navbar';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '@/supabase/client';
 import { UI_MESSAGES } from '@/utils/constants';
 
 interface Idea {
@@ -39,7 +39,6 @@ export default function GeneratorPage() {
 
   const { user } = useAuth();
   const router = useRouter();
-  const supabase = createClientComponentClient();
 
   useEffect(() => {
     // Capturar teamId da URL
