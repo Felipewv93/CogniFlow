@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { IdeaCard } from '@/components/dashboard/idea-card';
 import { IdeaForm } from '@/components/dashboard/idea-form';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '@/supabase/client';
 import { Navbar } from '@/components/layout/navbar';
 import {
   BarChart,
@@ -37,7 +37,6 @@ import { ptBR } from 'date-fns/locale';
 import type { Idea } from '@/lib/hooks/use-ideas';
 
 export default function DashboardPage() {
-  const supabase = createClientComponentClient();
   const { user } = useAuth();
   const { ideas, loading, createIdea, updateIdea, deleteIdea, toggleFavorite } = useIdeas();
   const [showForm, setShowForm] = useState(false);
@@ -67,7 +66,7 @@ export default function DashboardPage() {
       }
     };
     loadProfile();
-  }, [user, supabase]);
+  }, [user]);
 
   const handleCreateIdea = async (ideaData: any) => {
     await createIdea(ideaData);
