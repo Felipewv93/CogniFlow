@@ -1,19 +1,22 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const rootDir = path.resolve(__dirname, '../..');
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '../..'),
-      '@/lib': path.resolve(__dirname, '../../lib'),
-      '@/components': path.resolve(__dirname, '../../components'),
-      '@/utils': path.resolve(__dirname, '../../utils'),
-      '@/types': path.resolve(__dirname, '../../types'),
-      '@/hooks': path.resolve(__dirname, '../../lib/hooks'),
+      '@': rootDir,
+      '@/': rootDir,
+      '@/lib': path.resolve(rootDir, 'lib'),
+      '@/components': path.resolve(rootDir, 'components'),
+      '@/utils': path.resolve(rootDir, 'utils'),
+      '@/types': path.resolve(rootDir, 'types'),
+      '@/hooks': path.resolve(rootDir, 'lib/hooks'),
     },
   },
   test: {
