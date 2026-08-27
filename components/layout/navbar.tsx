@@ -21,14 +21,13 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/helpers/utils';
 import { ROUTES } from '@/utils/constants';
 import { useAuth } from '@/lib/auth-context';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '@/supabase/client';
 import { toast } from 'sonner';
 
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, signOut } = useAuth();
-  const supabase = createClientComponentClient();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [profileName, setProfileName] = useState('');
@@ -52,7 +51,7 @@ export function Navbar() {
     };
 
     loadProfile();
-  }, [user, supabase]);
+  }, [user]);
 
   // Fechar menu ao clicar fora
   useEffect(() => {

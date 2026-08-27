@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/supabase/client';
@@ -67,11 +67,13 @@ export function useIdeas() {
 
   const updateIdea = async (id: string, updates: Partial<Idea>) => {
     try {
+      if (!user) throw new Error('Usuário não autenticado');
+
       const { data, error } = await supabase
         .from('ideas')
         .update(updates)
         .eq('id', id)
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id)
         .select()
         .maybeSingle();
 
