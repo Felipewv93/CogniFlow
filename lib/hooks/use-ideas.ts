@@ -29,6 +29,7 @@ export function useIdeas() {
       const { data, error } = await supabase
         .from('ideas')
         .select('*')
+        .eq('user_id', user?.id)
         .is('team_id', null)
         .order('created_at', { ascending: false });
 
@@ -111,6 +112,9 @@ export function useIdeas() {
   useEffect(() => {
     if (user) {
       fetchIdeas();
+    } else {
+      setIdeas([]);
+      setLoading(false);
     }
   }, [user]);
 

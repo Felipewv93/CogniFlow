@@ -237,6 +237,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Restrict execution permissions to service_role only
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM anon;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user() FROM authenticated;
+GRANT EXECUTE ON FUNCTION public.handle_new_user() TO service_role;
+
 -- Trigger to create profile on signup
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
