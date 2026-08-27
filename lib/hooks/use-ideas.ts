@@ -71,10 +71,12 @@ export function useIdeas() {
         .from('ideas')
         .update(updates)
         .eq('id', id)
+        .eq('user_id', user?.id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) throw new Error('Ideia não encontrada ou sem permissão para editar');
 
       setIdeas(ideas.map((idea) => (idea.id === id ? data : idea)));
       toast.success('Ideia atualizada!');
