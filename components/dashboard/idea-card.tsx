@@ -15,6 +15,10 @@ interface IdeaCardProps {
 
 export function IdeaCard({ idea, onEdit, onDelete, onToggleFavorite }: IdeaCardProps) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const summary = (idea.description || 'Clique para visualizar os detalhes desta ideia.')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const compactSummary = summary.length > 180 ? `${summary.slice(0, 180)}...` : summary;
 
   const openDetails = () => setIsDetailsOpen(true);
 
@@ -33,30 +37,21 @@ export function IdeaCard({ idea, onEdit, onDelete, onToggleFavorite }: IdeaCardP
         tabIndex={0}
         aria-label={`Abrir detalhes de ${idea.title}`}
       >
-      <div className="mb-3 flex items-start justify-between">
-        <div className="flex-1">
-          <div className="mb-2 flex items-center gap-2">
-            <h3 className="line-clamp-2 text-lg font-semibold">{idea.title}</h3>
-            <button
-              onClick={(event) => {
-                event.stopPropagation();
-                onToggleFavorite(idea.id, !idea.is_favorite);
-              }}
-              aria-label={idea.is_favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
-              className="text-muted-foreground transition hover:text-yellow-500"
-            >
-              <Star className="h-5 w-5" fill={idea.is_favorite ? 'currentColor' : 'none'} />
-            </button>
-          </div>
-          {idea.description && (
-            <p className="mb-3 text-sm text-muted-foreground">{idea.description}</p>
-          )}
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <h3 className="line-clamp-2 text-lg font-semibold">{idea.title}</h3>
+          <button
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggleFavorite(idea.id, !idea.is_favorite);
+            }}
+            aria-label={idea.is_favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+            className="shrink-0 text-muted-foreground transition hover:text-yellow-500"
+          >
+            <Star className="h-5 w-5" fill={idea.is_favorite ? 'currentColor' : 'none'} />
+          </button>
         </div>
-      </div>
 
-      <p className="mb-4 max-h-[4.5rem] overflow-hidden text-sm text-muted-foreground">
-        {idea.description || 'Clique para visualizar os detalhes desta ideia.'}
-      </p>
+        <p className="mb-4 min-h-[3.75rem] text-sm text-muted-foreground">{compactSummary}</p>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <Badge variant="secondary">{idea.category}</Badge>
