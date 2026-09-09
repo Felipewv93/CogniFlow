@@ -570,6 +570,24 @@ export default function TeamDetailPage() {
                       <XAxis dataKey="day" className="text-xs" />
                       <YAxis className="text-xs" allowDecimals={false} />
                       <Tooltip
+                        content={({ active, payload, label }) => {
+                          if (!active || !payload?.length) return null;
+
+                          return (
+                            <div
+                              className="rounded-lg border px-3 py-2 shadow-lg"
+                              style={{
+                                backgroundColor: 'hsl(var(--popover))',
+                                borderColor: 'hsl(var(--border))',
+                                color: 'hsl(var(--popover-foreground))',
+                              }}
+                            >
+                              <div className="font-medium">{label}</div>
+                              <div>{payload[0].value}</div>
+                            </div>
+                          );
+                        }}
+                        formatter={(value) => [value, '']}
                         contentStyle={{
                           backgroundColor: 'hsl(var(--popover))',
                           borderColor: 'hsl(var(--border))',
@@ -585,7 +603,7 @@ export default function TeamDetailPage() {
                         }}
                         cursor={false}
                       />
-                      <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                      <Bar dataKey="count" name="" fill="#3b82f6" radius={[8, 8, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -927,7 +945,7 @@ export default function TeamDetailPage() {
                 {ideas.map((idea) => (
                   <div
                     key={idea.id}
-                    className="rounded-lg border bg-card p-4 transition hover:-translate-y-2 hover:scale-[1.02] hover:border-purple-500 hover:shadow-lg"
+                    className="flex h-full flex-col rounded-lg border bg-card p-4 transition hover:-translate-y-2 hover:scale-[1.02] hover:border-purple-500 hover:shadow-lg"
                   >
                     <div className="mb-3 flex items-start justify-between">
                       <h3 className="flex-1 font-bold">{idea.title}</h3>
@@ -944,19 +962,21 @@ export default function TeamDetailPage() {
                     <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
                       {idea.description}
                     </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="rounded bg-muted px-2 py-1">{idea.category}</span>
-                      <span>{new Date(idea.created_at).toLocaleDateString('pt-BR')}</span>
+                    <div className="mt-auto">
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span className="rounded bg-muted px-2 py-1">{idea.category}</span>
+                        <span>{new Date(idea.created_at).toLocaleDateString('pt-BR')}</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setSelectedIdea(idea);
+                          setShowIdeaDetailModal(true);
+                        }}
+                        className="mt-3 w-full rounded-lg border border-purple-500 px-3 py-2 text-sm text-purple-600 transition hover:bg-purple-50 dark:hover:bg-purple-950"
+                      >
+                        Ver detalhes
+                      </button>
                     </div>
-                    <button
-                      onClick={() => {
-                        setSelectedIdea(idea);
-                        setShowIdeaDetailModal(true);
-                      }}
-                      className="mt-3 w-full rounded-lg border border-purple-500 px-3 py-2 text-sm text-purple-600 transition hover:bg-purple-50 dark:hover:bg-purple-950"
-                    >
-                      Ver detalhes
-                    </button>
                   </div>
                 ))}
               </div>
