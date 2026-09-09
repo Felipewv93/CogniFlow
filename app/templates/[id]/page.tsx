@@ -7,13 +7,12 @@ import { ArrowLeft, Copy, Save, Download, Sparkles, Users, Target, Zap } from 'l
 import { TEMPLATES_DATA, TemplateData } from '@/lib/templates-data';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth-context';
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { supabase } from '@/supabase/client';
 
 export default function TemplateDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const supabase = createClientComponentClient();
 
   const [template, setTemplate] = useState<TemplateData | null>(null);
   const [fieldValues, setFieldValues] = useState<Record<string, string>>({});
@@ -82,6 +81,16 @@ export default function TemplateDetailPage() {
     }
 
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.user) {
+        toast.error('Sua sessão expirou. Faça login novamente.');
+        router.push('/auth/login');
+        return;
+      }
+
       const ideaData: any = {
         title: template?.title || 'Template',
         description: template?.description || '',
@@ -89,7 +98,7 @@ export default function TemplateDetailPage() {
         category: template?.category || 'other',
         tags: [],
         is_favorite: false,
-        user_id: user.id,
+        user_id: session.user.id,
       };
 
       // Se vier de um time, salvar com team_id
@@ -108,8 +117,9 @@ export default function TemplateDetailPage() {
         toast.success('Salvo como ideia!');
         router.push('/dashboard');
       }
-    } catch (error) {
-      toast.error('Erro ao salvar');
+    } catch (error: any) {
+      console.error('Erro ao salvar template como ideia:', error);
+      toast.error(error?.message || 'Erro ao salvar');
     }
   };
 

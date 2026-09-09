@@ -229,7 +229,10 @@ Sempre que possível:
             ],
             generationConfig: {
               temperature: 0.7,
-              maxOutputTokens: 1100,
+              maxOutputTokens: 4096,
+              thinkingConfig: {
+                thinkingBudget: 1024,
+              },
             },
           }),
         });
@@ -252,6 +255,8 @@ Sempre que possível:
 
         const data = await apiResponse.json();
         text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        console.log('🤖 Gemini - Motivo de finalização:', data?.candidates?.[0]?.finishReason);
 
         if (text) {
           break;
