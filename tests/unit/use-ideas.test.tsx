@@ -168,7 +168,7 @@ describe('useIdeas', () => {
 
     mocks.supabase.from.mockReturnValueOnce(
       createQueryBuilder({
-        data: null,
+        data: [{ id: 'idea-3' }],
         error: null,
       })
     );
