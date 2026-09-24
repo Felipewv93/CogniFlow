@@ -130,7 +130,17 @@ export default function DashboardPage() {
   });
 
   // Estatísticas e dados para gráficos
-  const categories = ['all', ...new Set(ideas.map((idea) => idea.category))];
+  const categories = [
+    'all',
+    ...Array.from(
+      new Map(
+        ideas.map((idea) => [
+          idea.category.trim().toLocaleLowerCase('pt-BR'),
+          idea.category.trim(),
+        ])
+      ).values()
+    ),
+  ];
   const favoriteCount = ideas.filter((idea) => idea.is_favorite).length;
 
   // Ideias criadas nos últimos 7 dias
@@ -155,7 +165,9 @@ export default function DashboardPage() {
     .filter((cat) => cat !== 'all')
     .map((cat) => ({
       name: cat,
-      value: ideas.filter((idea) => idea.category === cat).length,
+      value: ideas.filter(
+        (idea) => idea.category.trim().toLocaleLowerCase('pt-BR') === cat.toLocaleLowerCase('pt-BR')
+      ).length,
     }))
     .filter((item) => item.value > 0);
 
@@ -192,7 +204,7 @@ export default function DashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 text-4xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Bem-vindo, {profileName}! 👋</p>
+          <p className="text-muted-foreground">Bem-vindo, {profileName}!</p>
         </div>
 
         {/* Stats Cards */}
@@ -265,6 +277,24 @@ export default function DashboardPage() {
                     <XAxis dataKey="day" className="text-xs" />
                     <YAxis className="text-xs" allowDecimals={false} />
                     <Tooltip
+                      content={({ active, payload, label }) => {
+                        if (!active || !payload?.length) return null;
+
+                        return (
+                          <div
+                            className="rounded-lg border px-3 py-2 shadow-lg"
+                            style={{
+                              backgroundColor: 'hsl(var(--popover))',
+                              borderColor: 'hsl(var(--border))',
+                              color: 'hsl(var(--popover-foreground))',
+                            }}
+                          >
+                            <div className="font-medium">{label}</div>
+                            <div>{payload[0].value}</div>
+                          </div>
+                        );
+                      }}
+                      formatter={(value) => [value, '']}
                       contentStyle={{
                         backgroundColor: 'hsl(var(--popover))',
                         borderColor: 'hsl(var(--border))',
@@ -280,7 +310,7 @@ export default function DashboardPage() {
                       }}
                       cursor={false}
                     />
-                    <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="count" name="" fill="#3b82f6" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

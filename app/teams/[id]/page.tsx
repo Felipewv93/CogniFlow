@@ -615,13 +615,28 @@ export default function TeamDetailPage() {
                     <RechartsPie>
                       <Pie
                         data={(() => {
-                          const categories = [...new Set(ideas.map((i) => i.category))];
+                          const categories = Array.from(
+                            new Map(
+                              ideas.map((idea) => [
+                                idea.category.trim().toLocaleLowerCase('pt-BR'),
+                                idea.category.trim(),
+                              ])
+                            ).entries()
+                          );
                           const categoryData = categories
-                            .map((cat) => ({
-                              name: cat,
-                              value: ideas.filter((idea) => idea.category === cat).length,
+                            .map(([normalizedCategory, category]) => ({
+                              name: category,
+                              value: ideas.filter(
+                                (idea) =>
+                                  idea.category.trim().toLocaleLowerCase('pt-BR') ===
+                                  normalizedCategory
+                              ).length,
                               percent:
-                                ideas.filter((idea) => idea.category === cat).length / ideas.length,
+                                ideas.filter(
+                                  (idea) =>
+                                    idea.category.trim().toLocaleLowerCase('pt-BR') ===
+                                    normalizedCategory
+                                ).length / ideas.length,
                             }))
                             .filter((item) => item.value > 0);
                           return categoryData;
@@ -649,8 +664,15 @@ export default function TeamDetailPage() {
                             '#10b981',
                             '#ef4444',
                           ];
-                          const categories = [...new Set(ideas.map((i) => i.category))];
-                          return categories.map((_entry, index) => (
+                          const categories = Array.from(
+                            new Map(
+                              ideas.map((idea) => [
+                                idea.category.trim().toLocaleLowerCase('pt-BR'),
+                                idea.category.trim(),
+                              ])
+                            ).values()
+                          );
+                          return categories.map((_category, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ));
                         })()}

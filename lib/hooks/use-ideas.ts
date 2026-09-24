@@ -69,12 +69,18 @@ export function useIdeas() {
     try {
       if (!user) throw new Error('Usuário não autenticado');
 
-      const { error } = await supabase
+      const { data: updatedIdeas, error } = await supabase
         .from('ideas')
         .update(updates)
-        .eq('id', id);
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select('id, is_favorite');
 
       if (error) throw error;
+
+      if (!updatedIdeas?.length) {
+        throw new Error('A ideia não foi atualizada. Verifique sua sessão e permissões.');
+      }
 
       setIdeas(
         ideas.map((idea) =>
@@ -92,9 +98,20 @@ export function useIdeas() {
 
   const deleteIdea = async (id: string) => {
     try {
-      const { error } = await supabase.from('ideas').delete().eq('id', id);
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { data: deletedIdeas, error } = await supabase
+        .from('ideas')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .select('id');
 
       if (error) throw error;
+
+      if (!deletedIdeas?.length) {
+        throw new Error('A ideia não foi excluída. Verifique sua sessão e permissões.');
+      }
 
       setIdeas(ideas.filter((idea) => idea.id !== id));
       toast.success('Ideia deletada!');
